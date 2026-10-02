@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Teplice D" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#10263d" />
+  <link rel="manifest" href="manifest.json" />
+  <title>TJ Teplice Letná D — Okresní přebor B</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #10263d;
+      --navy-2: #17344f;
+      --ink: #172230;
+      --muted: #4e5b6a;
+      --paper: #efe7da;
+      --card: #fffcf7;
+      --line: #ddd1bf;
+      --gold: #c9a45a;
+      --green: #1f6d42;
+      --red: #a83232;
+      --blue: #215d86;
+      --shadow: 0 8px 24px rgba(16,38,61,.08);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: "DM Sans", system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+    }
+    .hero {
+      background: var(--navy);
+      color: #fff;
+      padding: 36px 18px 28px;
+    }
+    .hero-inner { max-width: 1180px; margin: 0 auto; position: relative; }
+    .update-btn {
+      position: absolute; top: 0; right: 0;
+      background: var(--gold); color: #1b1408; border: 0;
+      border-radius: 999px; padding: 10px 16px; font: inherit; font-weight: 700;
+      cursor: pointer;
+    }
+    .update-btn:disabled { opacity: .6; cursor: wait; }
+    .hall-form, .trip-money { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:10px 0 14px; }
+    .hall-form input, .trip-money input, .filters input[type="date"] {
+      border:1px solid var(--line); border-radius:10px; padding:8px 10px; font:inherit;
+    }
+    .split-grid { display:grid; grid-template-columns:1.2fr .8fr; gap:16px; }
+    @media (max-width:800px){ .split-grid { grid-template-columns:1fr; } }
+    .add-btn {
+      background: var(--gold); color:#1b1408; border:0; border-radius:999px;
+      padding:10px 16px; font:inherit; font-weight:800; cursor:pointer;
+    }
+    .update-msg { position: absolute; top: 58px; right: 0; font-size: 12px; color: #e8d7ad; max-width: 280px; text-align: right; }
+    .update-time { position: absolute; top: 40px; right: 0; font-size: 11px; color: #c9d7e4; text-align: right; }
+    .eyebrow {
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      font-size: 12px;
+      color: #e8d7ad;
+      margin-bottom: 8px;
+    }
+    h1 {
+      font-family: Fraunces, Georgia, serif;
+      font-size: clamp(30px, 5vw, 48px);
+      margin: 0 0 8px;
+      color: #fff;
+    }
+    .sub { color: #e7eef5; max-width: 760px; line-height: 1.45; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 22px;
+    }
+    .stat {
+      background: #1b3a58;
+      border: 1px solid #2b5474;
+      border-radius: 16px;
+      padding: 16px 16px 14px;
+      color: #fff;
+    }
+    .stat b { display: block; font-size: 26px; font-family: Fraunces, serif; color: #fff; }
+    .stat span { font-size: 12px; color: #d5e3ef; }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 18px 18px 64px; }
+    nav.tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 14px; }
+    nav.tabs button {
+      border: 0; background: #fff; color: var(--navy);
+      border-radius: 999px; padding: 9px 14px; font-weight: 700;
+      cursor: pointer; font-family: inherit;
+    }
+    nav.tabs button.active { background: var(--gold); color: #1b1408; }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .filters { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+    select, input[type="search"] {
+      border: 1px solid var(--line); background: #fff; border-radius: 12px;
+      padding: 9px 12px; font: inherit; min-width: 180px; color: var(--ink);
+    }
+    .balance {
+      display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+      background: var(--navy);
+      color: #fff;
+      border-radius: 16px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+    }
+    .balance .title { font-weight: 700; margin-right: 6px; color: #fff; }
+    .balance .num { font-family: Fraunces, serif; font-size: 28px; color: #fff; }
+    .chip {
+      background: #1b3a58; color: #fff; border: 1px solid #2b5474;
+      border-radius: 999px; padding: 6px 10px; font-size: 13px;
+    }
+    table.grid { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; }
+    table.grid th {
+      text-align: left; font-size: 11px; letter-spacing: .05em; text-transform: uppercase;
+      color: #d7e4ef; background: var(--navy-2); padding: 11px 10px;
+    }
+    table.grid th:first-child { border-radius: 12px 0 0 0; }
+    table.grid th:last-child { border-radius: 0 12px 0 0; }
+    table.grid td { padding: 11px 10px; border-bottom: 1px solid var(--line); background: #fff; color: var(--ink); }
+    table.grid tbody tr { cursor: pointer; }
+    table.grid tbody tr:hover td { background: #f4eadc; }
+    table.grid tbody tr.selected td { background: #e8f1f8; }
+
+    tr.tepl-d td { background:#fff4cc !important; font-weight:700; }
+    tr.tepl-d td:first-child { background:#c9a227 !important; }
+    .place-d {
+      display:inline-flex; min-width:2.2em; justify-content:center;
+      background:#c9a227; color:#1b1408; border-radius:999px;
+      padding:3px 8px; font-weight:800;
+    }
+
+    table.grid tbody tr.planned td { color: var(--muted); }
+    .pill { display: inline-flex; border-radius: 999px; padding: 2px 8px; font-size: 12px; font-weight: 700; }
+    .win { background: #dcefe3; color: var(--green); }
+    .loss { background: #f6dede; color: var(--red); }
+    .draw { background: #f7e7bf; color: #7a5b12; }
+    .plan { background: #ece7df; color: #5b5347; }
+    .home { background: #dceaf4; color: var(--blue); }
+    .away { background: #f3e6cf; color: #7a5b20; }
+    .detail {
+      margin-top: 14px; border: 1px solid var(--line); border-radius: 16px;
+      padding: 16px; background: #fff;
+    }
+    .modal-bg {
+      position: fixed; inset: 0; background: rgba(16,38,61,.55);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 50; padding: 18px;
+    }
+    .modal {
+      background: #fff; border-radius: 20px; max-width: 820px; width: 100%;
+      max-height: 90vh; overflow: auto; padding: 20px; box-shadow: var(--shadow);
+    }
+    .detail h2, .modal h2 { font-family: Fraunces, serif; margin: 0 0 6px; }
+    .scoreline { font-size: 30px; font-family: Fraunces, serif; }
+    .pair { border: 1px solid var(--line); border-radius: 14px; padding: 10px; margin: 10px 0; }
+    .pair-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .pair h3 { margin: 0 0 6px; font-size: 15px; }
+    .lane-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .lane-table th, .lane-table td { padding: 4px 6px; border-bottom: 1px solid #efe6d8; text-align: center; }
+    @media (max-width: 700px) { .pair-grid { grid-template-columns: 1fr; } }
+    .muted { color: var(--muted); }
+    .player-link {
+      background: none; border: 0; padding: 0; font: inherit; font-weight: 700;
+      color: var(--blue); cursor: pointer; text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .player-link:hover { color: var(--navy); }
+    .card-head {
+      display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      align-items: flex-start; margin-bottom: 12px;
+    }
+    .back-btn {
+      border: 2px solid #fff; background: var(--gold); border-radius: 999px;
+      padding: 10px 16px; font: inherit; font-weight: 800; cursor: pointer; color: #1b1408;
+      box-shadow: 0 2px 0 #c9a227;
+    }
+    .chart-btn {
+      border: 2px solid #fff; background: var(--gold); border-radius: 999px;
+      padding: 10px 16px; font: inherit; font-weight: 800; cursor: pointer; color: #1b1408;
+      box-shadow: 0 2px 0 #c9a227;
+    }
+    .chart-btn.active { background: #1b3f66; color: #fff; box-shadow: none; }
+    .chart-box {
+      background: #fff; border: 1px solid var(--line); border-radius: 16px;
+      padding: 14px 12px 8px; margin-bottom: 14px; overflow-x: auto;
+    }
+    .chart-legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin: 6px 2px 0; }
+    .season-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .season-card {
+      appearance: none; border: 1px solid var(--line); background: #fff;
+      border-radius: 18px; padding: 18px 14px; text-align: center; cursor: pointer;
+      font: inherit; color: var(--ink); box-shadow: var(--shadow);
+    }
+    .season-card:hover { border-color: var(--gold); transform: translateY(-1px); }
+    .season-card .yr { font-family: Fraunces, serif; font-size: 22px; margin-bottom: 8px; }
+    .season-card .ratio { font-family: Fraunces, serif; font-size: 30px; color: var(--navy); }
+    .season-card .place { color: var(--muted); font-size: 13px; margin-top: 8px; }
+    footer { margin-top: 22px; color: var(--muted); font-size: 13px; }
+    @media (max-width: 900px) {
+      .stats { grid-template-columns: 1fr 1fr; }
+      .hide-sm { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <button class="update-btn" id="btnUpdate">Aktualizovat</button>
+      <div class="update-time" id="updateTime"></div>
+      <div class="update-msg" id="updateMsg"></div>
+      <div class="eyebrow">Ústecký kraj · kuželky</div>
+      <h1>TJ Teplice Letná D</h1>
+      <div class="sub">Okresní přebor – skupina B. Výsledky, zápasy a statistiky hráčů od sezóny 2017/2018 do 2026/2027.</div>
+      <div class="stats" id="kpi"></div>
+    </div>
+  </header>
+  <div class="wrap">
+    <nav class="tabs">
+      <button class="active" data-tab="matches">Sezony</button>
+      <button data-tab="stats">Statistika „D“</button>
+      <button data-tab="opponents">Databáze protihráčů</button>
+      <button data-tab="halls">Kuželny</button>
+      <button data-tab="trips">Cesty</button>
+    </nav>
+    <section class="panel" id="app"></section>
+    <footer>Data: kuzelky.com (2017–2026) a vysledky.kuzelky.cz (2026/2027). Aplikace funguje i offline.</footer>
+  </div>
+  <script src="data.js"></script>
+  <script>
+    const DATA = window.APP_DATA;
+    const $ = (s, r=document) => r.querySelector(s);
+    let tab = "matches";
+    let season = "all";
+    let openedSeason = null;
+    let showTable = true;
+    let seasonOverview = true;
+    let q = "";
+    let selectedId = null;
+    let selectedPairHrac = null;
+    let selectedPlayer = null;
+    let playerSeason = "all";
+    let playerVenue = "all";
+    let playerOpponent = "all";
+    let playerPlace = "all";
+    let playerSpan = "all";
+    let showChart = false;
+    let oppTeam = null;
+    let oppPlayer = null;
+    let oppQ = "";
+    let oppVenue = "all";
+    let oppPlace = "all";
+    let oppSpan = "all";
+    let tripFrom = "01.09.2026";
+    let tripTo = "31.08.2027";
+    let tripSeason = "2026/2027";
+    const DRIVERS = ["Markéta M.","Jana N.","Ivan K.","Karel Š.","Martin Š.","Karel B."];
+    const DEFAULT_HALLS = [
+      {name:"Bílina", km:15, keys:["bílina","bilina"]},
+      {name:"Bohušovice", km:39, keys:["bohušovice","bohusovice"]},
+      {name:"Česká Kamenice", km:62, keys:["kamenice"]},
+      {name:"Duchcov", km:9, keys:["duchcov"]},
+      {name:"Hvězda Trnovany", km:9, keys:["hvězda","trnovany","hvezda"]},
+      {name:"Kovostroj Děčín", km:44, keys:["kovostroj"]},
+      {name:"Roudnice", km:47, keys:["roudnice"]},
+      {name:"SK Verneřice", km:46, keys:["verneřice","vernerice"]},
+      {name:"Sokol Ústí", km:22, keys:["sokol ústí","sokol usti"]},
+      {name:"TJ Lokomotiva Ústí nad Labem", km:25, keys:["lokomotiva"]},
+      {name:"Union Děčín", km:42, keys:["union"]}
+    ];
+    function loadHalls(){
+      try {
+        const raw = JSON.parse(localStorage.getItem("tepliceD_halls")||"null");
+        if (Array.isArray(raw) && raw.length) return raw;
+      } catch(e){}
+      return DEFAULT_HALLS.map(h => ({...h}));
+    }
+    function saveHalls(list){ localStorage.setItem("tepliceD_halls", JSON.stringify(list)); }
+    function loadDrivers(){ try { return JSON.parse(localStorage.getItem("tepliceD_drivers")||"{}"); } catch(e){ return {}; } }
+    function saveDrivers(m){ localStorage.setItem("tepliceD_drivers", JSON.stringify(m)); }
+    function loadMoney(){ try { return JSON.parse(localStorage.getItem("tepliceD_money")||"{}"); } catch(e){ return {}; } }
+    function saveMoney(m){ localStorage.setItem("tepliceD_money", JSON.stringify(m)); }
+    let halls = loadHalls();
+    let tripDrivers = loadDrivers();
+    let tripMoneyMap = loadMoney();
+    function moneyKey(){ return tripFrom+"|"+tripTo; }
+    function hallOf(m){
+      const blob = ((m.kuzelna||"")+" "+(m.souper||"")).toLowerCase();
+      return halls.find(h => (h.keys||[]).some(k => blob.includes(k)) || blob.includes((h.name||"").toLowerCase())) || null;
+    }
+    function toInputDate(dmy){
+      const p=String(dmy||"").split(".");
+      if(p.length<3) return "";
+      return `${p[2].padStart(4,"0")}-${p[1].padStart(2,"0")}-${p[0].padStart(2,"0")}`;
+    }
+    function fromInputDate(iso){
+      const p=String(iso||"").split("-");
+      if(p.length<3) return "";
+      return Number(p[2])+"."+Number(p[1])+"."+p[0];
+    }
+
+    function played(m){ return String(m.odehrano).toLowerCase() === "ano" && m.vysledek; }
+    function resultClass(m){
+      const a = Number(m.body_td), b = Number(m.body_opp);
+      if (!played(m) || Number.isNaN(a) || Number.isNaN(b)) return "plan";
+      if (a > b) return "win";
+      if (a < b) return "loss";
+      return "draw";
+    }
+    function resultLabel(m){
+      const c = resultClass(m);
+      return c === "win" ? "výhra" : c === "loss" ? "prohra" : c === "draw" ? "remíza" : "naplánováno";
+    }
+    function pairingResult(row){
+      const a = Number(row.soucet), b = Number(row.souper_soucet);
+      if (Number.isFinite(a) && Number.isFinite(b)) {
+        return a>b ? "výhra" : a<b ? "prohra" : "remíza";
+      }
+      if (row.vysledek === "výhra" || row.vysledek === "prohra" || row.vysledek === "remíza") return row.vysledek;
+      const mid = row.id_zapasu;
+      const peers = (DATA.opp||[]).filter(x => String(x.id_zapasu)===String(mid) && x.hrac!==row.hrac && Number.isFinite(Number(x.soucet)));
+      if (peers.length){
+        const c = Number(peers[0].soucet);
+        if (Number.isFinite(a) && Number.isFinite(c)) return a>c ? "výhra" : a<c ? "prohra" : "remíza";
+      }
+      const sb = Number(row.sb);
+      if (sb >= 2) return "výhra";
+      if (sb === 0) return "prohra";
+      return "—";
+    }
+    function matchByPerf(p){
+      return DATA.matches.find(m => String(m.id)===String(p.id_zapasu))
+        || DATA.matches.find(m => m.rocnik===p.rocnik && Number(m.kolo)===Number(p.kolo));
+    }
+        function noteFor(p){
+      if (!p) return "";
+      if (p.poznamka) return p.poznamka;
+      const row=(DATA.players||[]).find(x => x.hrac===p.hrac && (String(x.id_zapasu)===String(p.id_zapasu) || (x.datum===p.datum && x.rocnik===p.rocnik)));
+      return (row && row.poznamka) || "";
+    }
+function matchModalHtml(selected){
+      if (!selected) return "";
+      const detPlayers = DATA.players.filter(x => String(x.id_zapasu)===String(selected.id) || (x.rocnik===selected.rocnik && Number(x.kolo)===Number(selected.kolo) && /Teplice Letná D/.test(x.souper||selected.souper||"")));
+      const own = DATA.players.filter(x => String(x.id_zapasu)===String(selected.id) || (selected.rocnik && x.rocnik===selected.rocnik && Number(x.kolo)===Number(selected.kolo)));
+      let people = own.length ? own : (DATA.opp||[]).filter(x => String(x.id_zapasu)===String(selected.id));
+      if (selectedPairHrac) people = people.filter(x => x.hrac===selectedPairHrac || x.souper_hrac===selectedPairHrac);
+      if (selectedPairHrac && !people.length) {
+        people = (DATA.opp||[]).filter(x => x.hrac===selectedPairHrac && (String(x.id_zapasu)===String(selected.id) || (x.rocnik===selected.rocnik && Number(x.kolo)===Number(selected.kolo))));
+        people = people.map(x => {
+          const partner = (DATA.opp||[]).find(y => String(y.id_zapasu)===String(x.id_zapasu) && y.hrac!==x.hrac) || {};
+          return Object.assign({}, x, {souper_hrac: partner.hrac, souper_soucet: partner.soucet, souper_plne: partner.plne, souper_dorazka: partner.dorazka, souper_chyby: partner.chyby, souper_sb: partner.sb, souper_drahy: partner.drahy});
+        });
+      }
+      people = people.map(x => {
+        if (x.souper_hrac) return x;
+        const partner = (DATA.opp||[]).find(y => String(y.id_zapasu)===String(x.id_zapasu) && y.hrac!==x.hrac) || {};
+        if (!partner.hrac) return x;
+        return Object.assign({}, x, {souper_hrac: partner.hrac, souper_soucet: partner.soucet, souper_plne: partner.plne, souper_dorazka: partner.dorazka, souper_chyby: partner.chyby, souper_sb: partner.sb, souper_drahy: partner.drahy});
+      });
+      const laneHead = `<tr><th>Dráha</th><th>P</th><th>D</th><th>Ch</th><th>Σ</th><th>SB</th></tr>`;
+      const laneRows = (arr) => (arr&&arr.length?arr.map(dr => `<tr><td>${dr.draha}</td><td>${dr.plne}</td><td>${dr.dorazka}</td><td>${dr.chyby}</td><td>${dr.soucet}</td><td><b>${dr.sb ?? "—"}</b></td></tr>`).join(""):`<tr><td colspan="6" class="muted">Bez rozpisu drah</td></tr>`);
+      return `<div class="modal-bg" id="matchModal">
+            <div class="modal">
+              <div class="card-head">
+                <h2>${selected.tym || "TJ Teplice Letná D"} vs ${selected.souper || ""}</h2>
+                <button class="back-btn" id="closeMatch">Zavřít</button>
+              </div>
+              <div class="muted">${selected.rocnik || ""} · ${selected.kolo || ""}. kolo · ${selected.datum || ""} ${selected.cas || ""}</div>
+              <p><span class="pill ${selected.misto==="doma"?"home":"away"}">${selected.misto==="doma"?"DOMA":selected.misto==="venku"?"VENKU":(selected.misto||"—")}</span>
+              · Kuželna ${selected.kuzelna || "—"}</p>
+              
+              ${people.map(pr => {
+                const res = pairingResult(pr);
+                return `<div class="pair"><div class="pair-grid">
+                  <div>
+                    <h3>${pr.hrac} ${noteFor(pr)?`<span class="muted" style="font-size:14px;font-weight:700">${noteFor(pr)}</span>`:""} <span class="pill ${res==="výhra"?"win":res==="prohra"?"loss":"draw"}">${res}</span></h3>
+                    <div class="scoreline" style="font-size:28px">${pr.soucet ?? "—"}</div>
+                    <p>P ${pr.plne ?? "—"} · D ${pr.dorazka ?? "—"} · Ch ${pr.chyby ?? "—"} · SB ${pr.sb ?? "—"}</p>
+                    <table class="grid">${laneHead}${laneRows(pr.drahy)}</table>
+                  </div>
+                  <div>
+                    <h3>${pr.souper_hrac || pr.souper || "Soupeř"}</h3>
+                    <div class="scoreline" style="font-size:28px">${pr.souper_soucet ?? "—"}</div>
+                    <p>P ${pr.souper_plne ?? "—"} · D ${pr.souper_dorazka ?? "—"} · Ch ${pr.souper_chyby ?? "—"} · SB ${pr.souper_sb ?? "—"}</p>
+                    <table class="grid">${laneHead}${laneRows(pr.souper_drahy)}</table>
+                  </div>
+                </div></div>`;
+              }).join("")}
+            </div></div>`;
+    }
+
+    
+        const LEAGUE_TABLES = {"2017/2018": [{"p": 1, "tym": "TJ Kovostroj Děčín B", "z": 22, "v": 19, "r": 0, "p2": 3, "skore": "101:31", "sb": "121.5:54.5", "avg": 1612.8, "b": 38, "diff": "+16"}, {"p": 2, "tym": "Sokol Roudnice n. L.", "z": 22, "v": 17, "r": 1, "p2": 4, "skore": "88.5:43.5", "sb": "104:72", "avg": 1559.7, "b": 35, "diff": "+13"}, {"p": 3, "tym": "SKK Bílina B", "z": 22, "v": 15, "r": 1, "p2": 6, "skore": "82.5:49.5", "sb": "96.5:79.5", "avg": 1553.6, "b": 31, "diff": "+9"}, {"p": 4, "tym": "TJ Union Děčín", "z": 22, "v": 15, "r": 0, "p2": 7, "skore": "85.5:46.5", "sb": "105.5:70.5", "avg": 1568.5, "b": 30, "diff": "+8"}, {"p": 5, "tym": "Sokol Ústí n. L. C", "z": 22, "v": 11, "r": 1, "p2": 10, "skore": "72:60", "sb": "95:81", "avg": 1553.2, "b": 23, "diff": "+1"}, {"p": 6, "tym": "TJ Teplice Letná C", "z": 22, "v": 11, "r": 1, "p2": 10, "skore": "75.5:56.5", "sb": "111:65", "avg": 1544.7, "b": 23, "diff": "+1"}, {"p": 7, "tym": "KO Česká Kamenice B", "z": 22, "v": 11, "r": 0, "p2": 11, "skore": "59:73", "sb": "84.5:91.5", "avg": 1484.4, "b": 22, "diff": "0"}, {"p": 8, "tym": "TJ Kovostroj Děčín C", "z": 22, "v": 10, "r": 1, "p2": 11, "skore": "68.5:63.5", "sb": "86.5:89.5", "avg": 1498.1, "b": 21, "diff": "-1"}, {"p": 9, "tym": "Sokol Ústí n. L. B", "z": 22, "v": 8, "r": 1, "p2": 13, "skore": "58:74", "sb": "89:87", "avg": 1476.2, "b": 17, "diff": "-5"}, {"p": 10, "tym": "SKK Bohušovice C", "z": 22, "v": 6, "r": 2, "p2": 14, "skore": "50:82", "sb": "72:104", "avg": 1420.2, "b": 14, "diff": "-8"}, {"p": 11, "tym": "ASK Lovosice B", "z": 22, "v": 4, "r": 2, "p2": 16, "skore": "43:89", "sb": "67.5:108.5", "avg": 1489.3, "b": 10, "diff": "-12"}, {"p": 12, "tym": "TJ Teplice Letná D", "z": 22, "v": 0, "r": 0, "p2": 22, "skore": "8.5:123.5", "sb": "23:153", "avg": 1335.8, "b": 0, "diff": "-22"}], "2018/2019": [{"p": 1, "tym": "TJ Sokol Duchcov B", "z": 24, "v": 18, "r": 0, "p2": 6, "skore": "102:42", "sb": "123:69", "avg": 1616.6, "b": 36, "diff": "+12"}, {"p": 2, "tym": "ASK Lovosice B", "z": 24, "v": 16, "r": 0, "p2": 8, "skore": "87:57", "sb": "109.5:82.5", "avg": 1557.1, "b": 32, "diff": "+8"}, {"p": 3, "tym": "TJ Union Děčín", "z": 24, "v": 15, "r": 1, "p2": 8, "skore": "85:59", "sb": "108:84", "avg": 1521.5, "b": 31, "diff": "+7"}, {"p": 4, "tym": "Sokol Ústí nad Labem C", "z": 24, "v": 15, "r": 0, "p2": 9, "skore": "86.5:57.5", "sb": "108.5:83.5", "avg": 1577.1, "b": 30, "diff": "+6"}, {"p": 5, "tym": "Sokol Roudnice nad Labem", "z": 24, "v": 14, "r": 0, "p2": 10, "skore": "82:62", "sb": "109.5:82.5", "avg": 1582.2, "b": 28, "diff": "+4"}, {"p": 6, "tym": "Sokol Ústí nad Labem B", "z": 24, "v": 14, "r": 0, "p2": 10, "skore": "80:64", "sb": "99.5:92.5", "avg": 1489.0, "b": 28, "diff": "+4"}, {"p": 7, "tym": "KO Česká Kamenice B", "z": 24, "v": 13, "r": 0, "p2": 11, "skore": "83:61", "sb": "112.5:79.5", "avg": 1546.8, "b": 26, "diff": "+2"}, {"p": 8, "tym": "KK Hvězda Trnovany C", "z": 24, "v": 13, "r": 0, "p2": 11, "skore": "79:65", "sb": "99:93", "avg": 1519.0, "b": 26, "diff": "+2"}, {"p": 9, "tym": "TJ Kovostroj Děčín C", "z": 24, "v": 12, "r": 0, "p2": 12, "skore": "67:77", "sb": "87.5:104.5", "avg": 1503.0, "b": 24, "diff": "0"}, {"p": 10, "tym": "TJ Lokomotiva Ústí n. L. C", "z": 24, "v": 11, "r": 1, "p2": 12, "skore": "64.5:79.5", "sb": "87.5:104.5", "avg": 1513.9, "b": 23, "diff": "-1"}, {"p": 11, "tym": "TJ Teplice Letná C", "z": 24, "v": 9, "r": 0, "p2": 15, "skore": "59:85", "sb": "84.5:107.5", "avg": 1538.9, "b": 18, "diff": "-6"}, {"p": 12, "tym": "-- volný los --", "z": 24, "v": 4, "r": 0, "p2": 20, "skore": "42.5:101.5", "sb": "72.5:119.5", "avg": 1430.2, "b": 8, "diff": "-16"}, {"p": 13, "tym": "TJ Teplice Letná D", "z": 24, "v": 1, "r": 0, "p2": 23, "skore": "18.5:125.5", "sb": "46.5:145.5", "avg": 1359.3, "b": 2, "diff": "-22"}], "2019/2020": [{"p": 1, "tym": "TJ Kovostroj Děčín B", "z": 16, "v": 14, "r": 1, "p2": 1, "skore": "77.5:18.5", "sb": "94:34", "avg": 1595.4, "b": 29, "diff": "+13"}, {"p": 2, "tym": "TJ Union Děčín", "z": 17, "v": 12, "r": 1, "p2": 4, "skore": "64:38", "sb": "74.5:61.5", "avg": 1525.3, "b": 25, "diff": "+7"}, {"p": 3, "tym": "Sokol Roudnice n. L.", "z": 17, "v": 11, "r": 0, "p2": 6, "skore": "60:42", "sb": "70.5:65.5", "avg": 1521.6, "b": 22, "diff": "+6"}, {"p": 4, "tym": "Sokol Ústí n. L. B", "z": 17, "v": 10, "r": 2, "p2": 5, "skore": "60:42", "sb": "75:61", "avg": 1505.9, "b": 22, "diff": "+4"}, {"p": 5, "tym": "KO Česká Kamenice B", "z": 17, "v": 9, "r": 1, "p2": 7, "skore": "50.5:51.5", "sb": "69:67", "avg": 1490.9, "b": 19, "diff": "+1"}, {"p": 6, "tym": "ASK Lovosice B", "z": 17, "v": 8, "r": 0, "p2": 9, "skore": "49:53", "sb": "62.5:73.5", "avg": 1477.2, "b": 16, "diff": "0"}, {"p": 7, "tym": "-- volný los --", "z": 16, "v": 8, "r": 0, "p2": 8, "skore": "45.5:50.5", "sb": "63:65", "avg": 1415.5, "b": 16, "diff": "0"}, {"p": 8, "tym": "TJ Kovostroj Děčín C", "z": 16, "v": 7, "r": 0, "p2": 9, "skore": "45.5:50.5", "sb": "64:64", "avg": 1520.1, "b": 14, "diff": "-2"}, {"p": 9, "tym": "Sokol Ústí n. L. C", "z": 16, "v": 5, "r": 1, "p2": 10, "skore": "47.5:48.5", "sb": "68:60", "avg": 1536.4, "b": 11, "diff": "-5"}, {"p": 10, "tym": "TJ Teplice Letná C", "z": 16, "v": 3, "r": 0, "p2": 13, "skore": "26.5:69.5", "sb": "50:78", "avg": 1470.0, "b": 6, "diff": "-10"}, {"p": 11, "tym": "TJ Teplice Letná D", "z": 17, "v": 1, "r": 0, "p2": 16, "skore": "20:82", "sb": "37.5:98.5", "avg": 1347.3, "b": 2, "diff": "-14"}], "2020/2021": [{"p": 1, "tym": "Sokol Roudnice nad Labem", "z": 2, "v": 2, "r": 0, "p2": 0, "skore": "9.5:2.5", "sb": "11:5", "avg": 1587, "b": 4, "diff": "+2"}, {"p": 2, "tym": "TJ Kovostroj Děčín C", "z": 2, "v": 2, "r": 0, "p2": 0, "skore": "11:1", "sb": "12:4", "avg": 1558, "b": 4, "diff": "+2"}, {"p": 3, "tym": "Sokol Ústí n. L. C", "z": 2, "v": 2, "r": 0, "p2": 0, "skore": "11:1", "sb": "14:2", "avg": 1547, "b": 4, "diff": "+2"}, {"p": 4, "tym": "Sokol Ústí n. L. B", "z": 2, "v": 1, "r": 1, "p2": 0, "skore": "7.5:4.5", "sb": "10:6", "avg": 1532.5, "b": 3, "diff": "+1"}, {"p": 5, "tym": "TJ Kovostroj Děčín B", "z": 2, "v": 1, "r": 0, "p2": 1, "skore": "7:5", "sb": "11:5", "avg": 1607, "b": 2, "diff": "+2"}, {"p": 6, "tym": "KO Česká Kamenice B", "z": 2, "v": 1, "r": 0, "p2": 1, "skore": "6:6", "sb": "7:9", "avg": 1580, "b": 2, "diff": "0"}, {"p": 7, "tym": "TJ Union Děčín", "z": 2, "v": 1, "r": 0, "p2": 1, "skore": "6.5:5.5", "sb": "8:8", "avg": 1484.5, "b": 2, "diff": "0"}, {"p": 8, "tym": "TJ Lokomotiva Ústí n. L. D", "z": 2, "v": 1, "r": 0, "p2": 1, "skore": "6.5:5.5", "sb": "8:8", "avg": 1638, "b": 2, "diff": "-2"}, {"p": 9, "tym": "ASK Lovosice B", "z": 2, "v": 0, "r": 1, "p2": 1, "skore": "4:8", "sb": "5:11", "avg": 1366.5, "b": 1, "diff": "-1"}, {"p": 10, "tym": "TJ Teplice Letná C", "z": 2, "v": 0, "r": 0, "p2": 2, "skore": "2:10", "sb": "4:12", "avg": 1442, "b": 0, "diff": "-2"}, {"p": 11, "tym": "-- volný los --", "z": 2, "v": 0, "r": 0, "p2": 2, "skore": "0:12", "sb": "3:13", "avg": 1440.5, "b": 0, "diff": "-2"}, {"p": 12, "tym": "TJ Teplice Letná D", "z": 2, "v": 0, "r": 0, "p2": 2, "skore": "1:11", "sb": "3:13", "avg": 1273, "b": 0, "diff": "-2"}], "2021/2022": [{"p": 1, "tym": "TJ Kovostroj Děčín C", "z": 22, "v": 17, "r": 0, "p2": 5, "skore": "98:34", "sb": "110:66", "avg": 1576.1, "b": 34, "diff": "+12"}, {"p": 2, "tym": "ASK Lovosice B", "z": 22, "v": 16, "r": 1, "p2": 5, "skore": "87.5:44.5", "sb": "110:66", "avg": 1575.8, "b": 33, "diff": "+11"}, {"p": 3, "tym": "TJ Kovostroj Děčín B", "z": 22, "v": 14, "r": 1, "p2": 7, "skore": "80.5:51.5", "sb": "104:72", "avg": 1590.2, "b": 29, "diff": "+7"}, {"p": 4, "tym": "TJ Union Děčín", "z": 22, "v": 14, "r": 0, "p2": 8, "skore": "79.5:52.5", "sb": "101:75", "avg": 1521.6, "b": 28, "diff": "+6"}, {"p": 5, "tym": "Sokol Ústí n. L. C", "z": 22, "v": 12, "r": 1, "p2": 9, "skore": "71:61", "sb": "88.5:87.5", "avg": 1514.1, "b": 25, "diff": "+3"}, {"p": 6, "tym": "TJ Lokomotiva Ústí n. L. D", "z": 22, "v": 12, "r": 0, "p2": 10, "skore": "69.5:62.5", "sb": "95.5:80.5", "avg": 1541.9, "b": 24, "diff": "+2"}, {"p": 7, "tym": "Sokol Roudnice nad Labem", "z": 22, "v": 11, "r": 0, "p2": 11, "skore": "68:64", "sb": "89.5:86.5", "avg": 1539.4, "b": 22, "diff": "0"}, {"p": 8, "tym": "KO Česká Kamenice B", "z": 22, "v": 10, "r": 1, "p2": 11, "skore": "61:71", "sb": "91:85", "avg": 1486.2, "b": 21, "diff": "-1"}, {"p": 9, "tym": "Sokol Ústí n. L. B", "z": 22, "v": 9, "r": 1, "p2": 12, "skore": "61:71", "sb": "86.5:89.5", "avg": 1508.9, "b": 19, "diff": "-3"}, {"p": 10, "tym": "TJ Teplice Letná C", "z": 22, "v": 7, "r": 1, "p2": 14, "skore": "51:81", "sb": "68.5:107.5", "avg": 1489.8, "b": 15, "diff": "-7"}, {"p": 11, "tym": "TJ Teplice Letná D", "z": 22, "v": 4, "r": 0, "p2": 18, "skore": "32:100", "sb": "53:123", "avg": 1353.9, "b": 8, "diff": "-14"}, {"p": 12, "tym": "-- volný los --", "z": 22, "v": 2, "r": 2, "p2": 18, "skore": "33:99", "sb": "58.5:117.5", "avg": 1416.8, "b": 6, "diff": "-16"}], "2022/2023": [{"p": 1, "tym": "TJ Lokomotiva Ústí n. L. D", "z": 18, "v": 15, "r": 0, "p2": 3, "skore": "79.5:28.5", "sb": "86.5:57.5", "avg": 1618.9, "b": 30, "diff": "+12"}, {"p": 2, "tym": "TJ Kovostroj Děčín C", "z": 18, "v": 13, "r": 0, "p2": 5, "skore": "68:40", "sb": "82:62", "avg": 1616.5, "b": 26, "diff": "+8"}, {"p": 3, "tym": "TJ Union Děčín", "z": 18, "v": 13, "r": 0, "p2": 5, "skore": "75:33", "sb": "95.5:48.5", "avg": 1587.2, "b": 26, "diff": "+8"}, {"p": 4, "tym": "Sokol Ústí n. L. C", "z": 18, "v": 11, "r": 0, "p2": 7, "skore": "61:47", "sb": "78.5:65.5", "avg": 1551.4, "b": 22, "diff": "+4"}, {"p": 5, "tym": "Sokol Ústí n. L. B", "z": 18, "v": 10, "r": 0, "p2": 8, "skore": "61:47", "sb": "80.5:63.5", "avg": 1556.1, "b": 20, "diff": "+2"}, {"p": 6, "tym": "KO Česká Kamenice B", "z": 18, "v": 9, "r": 0, "p2": 9, "skore": "57:51", "sb": "79:65", "avg": 1545.1, "b": 18, "diff": "0"}, {"p": 7, "tym": "Sokol Roudnice nad Labem", "z": 18, "v": 8, "r": 0, "p2": 10, "skore": "47.5:60.5", "sb": "65:79", "avg": 1542.4, "b": 16, "diff": "-2"}, {"p": 8, "tym": "TJ Teplice Letná C", "z": 18, "v": 8, "r": 0, "p2": 10, "skore": "47.5:60.5", "sb": "61:83", "avg": 1517.8, "b": 16, "diff": "-2"}, {"p": 9, "tym": "TJ Teplice Letná D", "z": 18, "v": 2, "r": 0, "p2": 16, "skore": "22.5:85.5", "sb": "45:99", "avg": 1439.8, "b": 4, "diff": "-14"}, {"p": 10, "tym": "-- volný los --", "z": 18, "v": 1, "r": 0, "p2": 17, "skore": "21:87", "sb": "47:97", "avg": 1476.5, "b": 2, "diff": "-16"}], "2023/2024": [{"p": 1, "tym": "TJ Sokol Duchcov C", "z": 22, "v": 18, "r": 1, "p2": 3, "skore": "97:35", "sb": "111:65", "avg": 1637.4, "b": 37, "diff": "+15"}, {"p": 2, "tym": "KK Hvězda Trnovany", "z": 22, "v": 17, "r": 1, "p2": 4, "skore": "98:34", "sb": "122.5:53.5", "avg": 1666.6, "b": 35, "diff": "+13"}, {"p": 3, "tym": "TJ Kovostroj Děčín C", "z": 22, "v": 13, "r": 1, "p2": 8, "skore": "64:68", "sb": "82.5:93.5", "avg": 1570.0, "b": 27, "diff": "+5"}, {"p": 4, "tym": "TJ Union Děčín", "z": 22, "v": 13, "r": 0, "p2": 9, "skore": "77:55", "sb": "101.5:74.5", "avg": 1580.7, "b": 26, "diff": "+4"}, {"p": 5, "tym": "-- volný los --", "z": 22, "v": 12, "r": 0, "p2": 10, "skore": "72:60", "sb": "90:86", "avg": 1545.8, "b": 24, "diff": "+2"}, {"p": 6, "tym": "Sokol Ústí n. L. C", "z": 22, "v": 11, "r": 1, "p2": 10, "skore": "70.5:61.5", "sb": "93:83", "avg": 1574.1, "b": 23, "diff": "+1"}, {"p": 7, "tym": "Sokol Ústí n. L. B", "z": 22, "v": 11, "r": 0, "p2": 11, "skore": "57:75", "sb": "72:104", "avg": 1506.6, "b": 22, "diff": "0"}, {"p": 8, "tym": "Sokol Roudnice nad Labem", "z": 22, "v": 9, "r": 0, "p2": 13, "skore": "58:74", "sb": "78.5:97.5", "avg": 1528.7, "b": 18, "diff": "-4"}, {"p": 9, "tym": "KO Česká Kamenice B", "z": 22, "v": 9, "r": 0, "p2": 13, "skore": "62.5:69.5", "sb": "91:85", "avg": 1519.0, "b": 18, "diff": "-4"}, {"p": 10, "tym": "SK Verneřice B", "z": 22, "v": 7, "r": 2, "p2": 13, "skore": "54:78", "sb": "84:92", "avg": 1534.7, "b": 16, "diff": "-6"}, {"p": 11, "tym": "TJ Teplice Letná D", "z": 22, "v": 6, "r": 0, "p2": 16, "skore": "48.5:83.5", "sb": "70.5:105.5", "avg": 1479.2, "b": 12, "diff": "-10"}, {"p": 12, "tym": "TJ Teplice Letná C", "z": 22, "v": 3, "r": 0, "p2": 19, "skore": "33.5:98.5", "sb": "59.5:116.5", "avg": 1494.4, "b": 6, "diff": "-16"}], "2024/2025": [{"p": 1, "tym": "TJ Sokol Duchcov C", "z": 20, "v": 19, "r": 0, "p2": 1, "skore": "106:14", "sb": "126:34", "avg": 1657.9, "b": 38, "diff": "+18"}, {"p": 2, "tym": "Sokol Ústí n. L. B", "z": 20, "v": 15, "r": 0, "p2": 5, "skore": "80:40", "sb": "98.5:61.5", "avg": 1542.5, "b": 30, "diff": "+10"}, {"p": 3, "tym": "Sokol Ústí n. L. C", "z": 20, "v": 13, "r": 1, "p2": 6, "skore": "78.5:41.5", "sb": "94.5:65.5", "avg": 1602.3, "b": 27, "diff": "+7"}, {"p": 4, "tym": "TJ Union Děčín", "z": 20, "v": 13, "r": 0, "p2": 7, "skore": "69:51", "sb": "81.5:78.5", "avg": 1572.7, "b": 26, "diff": "+6"}, {"p": 5, "tym": "KO Česká Kamenice B", "z": 20, "v": 12, "r": 0, "p2": 8, "skore": "62:58", "sb": "79:81", "avg": 1529.2, "b": 24, "diff": "+4"}, {"p": 6, "tym": "Sokol Roudnice nad Labem", "z": 20, "v": 9, "r": 0, "p2": 11, "skore": "57.5:62.5", "sb": "75.5:84.5", "avg": 1513.9, "b": 18, "diff": "-2"}, {"p": 7, "tym": "TJ Teplice Letná C", "z": 20, "v": 9, "r": 0, "p2": 11, "skore": "52:68", "sb": "68.5:91.5", "avg": 1488.1, "b": 18, "diff": "-2"}, {"p": 8, "tym": "SK Verneřice B", "z": 20, "v": 8, "r": 0, "p2": 12, "skore": "52:68", "sb": "71.5:88.5", "avg": 1520.5, "b": 16, "diff": "-4"}, {"p": 9, "tym": "TJ Teplice Letná D", "z": 20, "v": 6, "r": 0, "p2": 14, "skore": "48:72", "sb": "70.5:89.5", "avg": 1461.3, "b": 12, "diff": "-8"}, {"p": 10, "tym": "TJ Kovostroj Děčín C", "z": 20, "v": 5, "r": 0, "p2": 15, "skore": "39.5:80.5", "sb": "71.5:88.5", "avg": 1498.0, "b": 10, "diff": "-10"}, {"p": 11, "tym": "TJ Kovostroj Děčín D", "z": 20, "v": 0, "r": 1, "p2": 19, "skore": "15.5:104.5", "sb": "43:117", "avg": 1350.0, "b": 1, "diff": "-19"}], "2025/2026": [{"p": 1, "tym": "TJ Teplice Letná B", "z": 20, "v": 19, "r": 0, "p2": 1, "skore": "106.5:13.5", "sb": "123.5:36.5", "avg": 1670.1, "b": 38, "diff": "+18"}, {"p": 2, "tym": "Sokol Ústí n. L. C", "z": 20, "v": 15, "r": 0, "p2": 5, "skore": "85:35", "sb": "103.5:56.5", "avg": 1613.5, "b": 30, "diff": "+10"}, {"p": 3, "tym": "Sokol Ústí n. L. B", "z": 20, "v": 14, "r": 1, "p2": 5, "skore": "74:46", "sb": "97.5:62.5", "avg": 1530.4, "b": 29, "diff": "+9"}, {"p": 4, "tym": "SKK Bílina B", "z": 20, "v": 14, "r": 0, "p2": 6, "skore": "76:44", "sb": "95.5:64.5", "avg": 1556.0, "b": 28, "diff": "+8"}, {"p": 5, "tym": "SK Verneřice B", "z": 20, "v": 11, "r": 0, "p2": 9, "skore": "64.5:55.5", "sb": "88:72", "avg": 1535.2, "b": 22, "diff": "+2"}, {"p": 6, "tym": "TJ Union Děčín", "z": 20, "v": 11, "r": 0, "p2": 9, "skore": "64:56", "sb": "80:80", "avg": 1533.7, "b": 22, "diff": "+2"}, {"p": 7, "tym": "Sokol Roudnice nad Labem", "z": 20, "v": 8, "r": 0, "p2": 12, "skore": "47:73", "sb": "70:90", "avg": 1496.2, "b": 16, "diff": "-4"}, {"p": 8, "tym": "TJ Teplice Letná C", "z": 20, "v": 7, "r": 0, "p2": 13, "skore": "45:75", "sb": "68.5:91.5", "avg": 1537.9, "b": 14, "diff": "-6"}, {"p": 9, "tym": "TJ Kovostroj Děčín C", "z": 20, "v": 5, "r": 0, "p2": 15, "skore": "39:81", "sb": "55.5:104.5", "avg": 1466.1, "b": 10, "diff": "-10"}, {"p": 10, "tym": "TJ Teplice Letná D", "z": 20, "v": 4, "r": 1, "p2": 15, "skore": "42:78", "sb": "62.5:97.5", "avg": 1438.8, "b": 9, "diff": "-11"}, {"p": 11, "tym": "TJ Kovostroj Děčín D", "z": 20, "v": 1, "r": 0, "p2": 19, "skore": "17:103", "sb": "35.5:124.5", "avg": 1401.2, "b": 2, "diff": "-18"}], "2026/2027": [
+        {p:1,tym:"TJ Teplice Letná C",z:2,v:2,r:0,p2:0,skore:"10:2",sb:"10:6",avg:1601,b:4,diff:"+2"},
+        {p:2,tym:"TJ Union Děčín",z:2,v:2,r:0,p2:0,skore:"9:3",sb:"11:5",avg:1484,b:4,diff:"+2"},
+        {p:3,tym:"Sokol Ústí n. L. C",z:2,v:2,r:0,p2:0,skore:"8:4",sb:"11:5",avg:1552,b:4,diff:"+2"},
+        {p:4,tym:"SKK Bílina B",z:2,v:1,r:0,p2:1,skore:"6:6",sb:"8:8",avg:1521,b:2,diff:"+2"},
+        {p:5,tym:"Sokol Ústí n. L. B",z:2,v:1,r:0,p2:1,skore:"8:4",sb:"11:5",avg:1538,b:2,diff:"0"},
+        {p:6,tym:"SK Verneřice B",z:2,v:1,r:0,p2:1,skore:"6:6",sb:"9:7",avg:1627,b:2,diff:"0"},
+        {p:7,tym:"TJ Kovostroj Děčín C",z:2,v:1,r:0,p2:1,skore:"6:6",sb:"7:9",avg:1498,b:2,diff:"0"},
+        {p:8,tym:"TJ Teplice Letná D",z:2,v:0,r:0,p2:2,skore:"4:8",sb:"5:11",avg:1527,b:0,diff:"-2"},
+        {p:9,tym:"Sokol Roudnice nad Labem",z:2,v:0,r:0,p2:2,skore:"3:9",sb:"5:11",avg:1465,b:0,diff:"-2"},
+        {p:10,tym:"TJ Kovostroj Děčín D",z:2,v:0,r:0,p2:2,skore:"0:12",sb:"3:13",avg:1326,b:0,diff:"-4"}
+      ]};
+    function renderLeagueTable(rocnik){
+      const rows = ((DATA.tables && DATA.tables[rocnik]) || LEAGUE_TABLES[rocnik] || []).filter(r => r.tym && !/volný los/i.test(r.tym));
+      if (!rows.length) return `<p class="muted">Konečná tabulka ročníku ${rocnik} se z kuzelky.com teď nenačetla (web tabulky plní jen v prohlížeči). Zkuste <a href="https://kuzelky.com/index.php?poi=tabul" target="_blank">kuzelky.com – Tabulka</a>.</p>`;
+      return `<div style="overflow:auto"><table class="grid">
+        <thead><tr><th>#</th><th>Tým</th><th>Z</th><th>V</th><th>R</th><th>P</th><th>Skóre</th><th>SB</th><th>Ø</th><th>B</th><th>+/−</th></tr></thead>
+        <tbody>${rows.map((r,i) => {
+          const mine=/Teplice Letná D/.test(r.tym);
+          return `<tr class="${mine?"selected tepl-d":""}">
+          <td>${mine?`<span class="place-d">${i+1}.</span>`:`${i+1}.`}</td><td><b>${r.tym}</b></td><td>${r.z}</td><td>${r.v}</td><td>${r.r}</td><td>${r.p2}</td>
+          <td>${r.skore}</td><td>${r.sb}</td><td>${r.avg}</td><td><b>${r.b}</b></td><td>${r.diff}</td>
+        </tr>`;
+        }).join("")}</tbody>
+      </table></div>`;
+    }
+
+    function parseDate(d){
+      const p = String(d||"").split(".");
+      if (p.length < 3) return 0;
+      return Date.UTC(p[2], Number(p[1])-1, Number(p[0]));
+    }
+    const seasons = [...new Set(DATA.matches.map(m => m.rocnik))].sort().reverse();
+    const allMatches = [...DATA.matches].sort((a,b) => {
+      const da = parseDate(a.datum) - parseDate(b.datum);
+      return da || Number(a.kolo) - Number(b.kolo);
+    });
+
+    function kpis(){
+      const playedMs = allMatches.filter(played);
+      const w = playedMs.filter(m => resultClass(m)==="win").length;
+      const d = playedMs.filter(m => resultClass(m)==="draw").length;
+      const l = playedMs.filter(m => resultClass(m)==="loss").length;
+      $("#kpi").innerHTML = `
+        <div class="stat"><b>${DATA.meta.rocniky}</b><span>ročníky</span></div>
+        <div class="stat"><b>${playedMs.length}</b><span>odehraných zápasů</span></div>
+        <div class="stat"><b>${w}–${d}–${l}</b><span>výhry – remízy – prohry</span></div>
+        <div class="stat"><b>${DATA.stats.length}</b><span>hráčů v databázi</span></div>`;
+    }
+
+    function seasonMatches(){
+      return season === "all" ? allMatches : allMatches.filter(m => m.rocnik === season);
+    }
+    function pinAvg(list, where){
+      const pins = list.filter(played)
+        .filter(m => !where || m.misto === where)
+        .map(m => Number(m.kuzelky_td)).filter(n => n > 0);
+      return pins.length ? Math.round(pins.reduce((a,b)=>a+b,0)/pins.length) : "—";
+    }
+    function balanceHtml(list){
+      const p = list.filter(played);
+      const w = p.filter(m => resultClass(m)==="win").length;
+      const d = p.filter(m => resultClass(m)==="draw").length;
+      const l = p.filter(m => resultClass(m)==="loss").length;
+      const label = season === "all" ? "Všechny ročníky" : season;
+      return `<div class="balance">
+        <div class="title">${label}</div>
+        <div class="num">${w}–${d}–${l}</div>
+        <span class="chip">průměr doma ${pinAvg(list,"doma")}</span>
+        <span class="chip">průměr venku ${pinAvg(list,"venku")}</span>
+      </div>`;
+    }
+
+    const PLACEMENT = Object.assign({
+      "2026/2027": "8. místo",
+      "2025/2026": "10. místo",
+      "2024/2025": "9. místo",
+      "2023/2024": "11. místo",
+      "2022/2023": "9. místo",
+      "2021/2022": "11. místo",
+      "2020/2021": "11. místo",
+      "2019/2020": "11. místo",
+      "2018/2019": "13. místo",
+      "2017/2018": "12. místo"
+    }, (DATA.meta && DATA.meta.umisteni) || {});
+    function seasonRecord(year){
+      const list = allMatches.filter(m => m.rocnik === year);
+      const p = list.filter(played);
+      return {
+        list,
+        w: p.filter(m => resultClass(m)==="win").length,
+        d: p.filter(m => resultClass(m)==="draw").length,
+        l: p.filter(m => resultClass(m)==="loss").length,
+        place: PLACEMENT[year] || "umístění neuvedeno"
+      };
+    }
+    function renderSeasonCards(){
+      return `<div class="season-grid">
+        ${seasons.map(s => {
+          const r = seasonRecord(s);
+          return `<button class="season-card" data-season="${s}">
+            <div class="yr">${s}</div>
+            <div class="ratio">${r.w}–${r.d}–${r.l}</div>
+            <div class="place">${r.place}</div>
+          </button>`;
+        }).join("")}
+      </div>`;
+    }
+    function latestSeason(){
+      const ys=[...new Set((DATA.matches||[]).map(m=>m.rocnik).filter(Boolean))];
+      ys.sort((a,b)=>String(b).localeCompare(String(a)));
+      return ys[0] || "2026/2027";
+    }
+    function renderMatches(){
+      if (seasonOverview) return renderSeasonCards();
+      if (!openedSeason) openedSeason = latestSeason();
+      season = openedSeason;
+      const list = seasonMatches();
+      const selected = DATA.matches.find(m => String(m.id) === String(selectedId));
+      const detPlayers = DATA.players.filter(p => String(p.id_zapasu) === String(selected?.id));
+      return `
+        <div class="filters">
+          <button class="back-btn" id="backSeasons">← Sezony</button>
+          <button class="back-btn" id="btnTable" style="${showTable?'background:#1f4e79;color:#fff':''}">Tabulka</button>
+          <button class="back-btn" id="btnMatches" style="${!showTable?'background:#1f4e79;color:#fff':''}">Zápasy</button>
+        </div>
+        ${showTable ? renderLeagueTable(openedSeason) : (balanceHtml(list) + `
+        <div style="overflow:auto">
+          <table class="grid">
+            <thead>
+              <tr>
+                <th>Kolo</th><th>Datum</th><th>Čas</th><th>Místo</th>
+                <th>Soupeř</th><th>Výsledek</th><th class="hide-sm">Kuželky</th><th>Stav</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${list.map(m => `
+                <tr data-id="${m.id}" class="${m.id==selectedId?"selected":""} ${played(m)?"":"planned"}">
+                  <td>${m.kolo}</td>
+                  <td>${m.datum}</td>
+                  <td>${m.cas || ""}</td>
+                  <td><span class="pill ${m.misto==="doma"?"home":"away"}">${m.misto || "—"}</span></td>
+                  <td><span class="player-link" data-oppteam="${encodeURIComponent(m.souper||"")}">${m.souper}</span></td>
+                  <td>${m.vysledek || "– : –"}</td>
+                  <td class="hide-sm">${m.kuzelky_td ?? "—"} : ${m.kuzelky_opp ?? "—"}</td>
+                  <td><span class="pill ${resultClass(m)}">${resultLabel(m)}</span></td>
+                </tr>`).join("")}
+            </tbody>
+          </table>
+        </div>`)}
+        ${selected && !showTable ? `
+          <div class="modal-bg" id="matchModal">
+            <div class="modal">
+              <div class="card-head">
+                <h2>${selected.tym} vs ${selected.souper}</h2>
+                <button class="back-btn" id="closeMatch">Zavřít</button>
+              </div>
+              <div class="muted">${selected.rocnik} · ${selected.kolo}. kolo · ${selected.datum} ${selected.cas || ""}</div>
+              <p><span class="pill ${selected.misto==="doma"?"home":"away"}" style="font-size:15px;padding:6px 12px">${selected.misto==="doma"?"DOMA":selected.misto==="venku"?"VENKU":(selected.misto||"—")}</span>
+              · Kuželna ${selected.kuzelna || "—"}</p>
+              
+              <p>Kuželky <b>${selected.kuzelky_td ?? "—"} : ${selected.kuzelky_opp ?? "—"}</b>
+              · Plné ${selected.plne_td ?? "—"} / ${selected.plne_opp ?? "—"}
+              · Dorážka ${selected.dor_td ?? "—"} / ${selected.dor_opp ?? "—"}
+              · Chyby ${selected.chyby_td ?? "—"} / ${selected.chyby_opp ?? "—"}</p>
+              <p class="muted">Kuželna: ${selected.kuzelna || "—"} · Rozhodčí: ${selected.rozhodci || "—"}</p>
+              ${detPlayers.map(p => {
+                const laneHead = `<tr><th>Dráha</th><th>P</th><th>D</th><th>Ch</th><th>Σ</th><th>SB</th></tr>`;
+                const laneRows = (arr) => (arr||[]).map(dr => `<tr><td>${dr.draha}</td><td>${dr.plne}</td><td>${dr.dorazka}</td><td>${dr.chyby}</td><td>${dr.soucet}</td><td><b>${dr.sb ?? "—"}</b></td></tr>`).join("") || `<tr><td colspan="6" class="muted">Bez rozpisu drah</td></tr>`;
+                const tot = (arr, key) => (arr||[]).reduce((a,x)=>a+Number(x[key]||0),0);
+                return `<div class="pair">
+                  <div class="pair-grid">
+                    <div>
+                      <h3>${p.hrac} ${noteFor(p)?`<span class="muted" style="font-size:14px;font-weight:700">${noteFor(p)}</span>`:""} <span class="pill ${p.vysledek==="výhra"?"win":p.vysledek==="prohra"?"loss":"draw"}">${p.vysledek || "—"}</span></h3>
+                      <div class="scoreline" style="font-size:26px">${p.soucet ?? "—"}</div>
+                      <div class="muted">P ${p.plne ?? "—"} · D ${p.dorazka ?? "—"} · Ch ${p.chyby ?? "—"} · SB ${p.sb ?? tot(p.drahy,"sb")}</div>
+                      <table class="lane-table"><thead>${laneHead}</thead><tbody>${laneRows(p.drahy)}</tbody></table>
+                    </div>
+                    <div>
+                      <h3 class="player-link" data-oppplayer="${encodeURIComponent(p.souper_hrac||"")}" data-oppteam="${encodeURIComponent(selected.souper||"")}">${p.souper_hrac || "Soupeř"}</h3>
+                      <div class="scoreline" style="font-size:26px">${p.souper_soucet ?? "—"}</div>
+                      <div class="muted">P ${p.souper_plne ?? "—"} · D ${p.souper_dorazka ?? "—"} · Ch ${p.souper_chyby ?? "—"} · SB ${p.souper_sb ?? tot(p.souper_drahy,"sb")}</div>
+                      <table class="lane-table"><thead>${laneHead}</thead><tbody>${laneRows(p.souper_drahy)}</tbody></table>
+                    </div>
+                  </div>
+                </div>`;
+              }).join("") || `<p class="muted">${played(selected)?"Bez podrobného zápisu hráčů.":"Naplánovaný zápas — zápis hráčů ještě není."}</p>`}
+            </div>
+          </div>` : ""}`;
+    }
+
+    function renderPlayers(){
+      const list = (season==="all"?DATA.players:DATA.players.filter(p=>p.rocnik===season))
+        .filter(p => {
+          const s = q.trim().toLowerCase();
+          if (!s) return true;
+          return [p.hrac, p.souper, p.souper_hrac, p.kuzelna].join(" ").toLowerCase().includes(s);
+        }).slice().reverse();
+      return `<div class="filters">
+          <select id="season">
+            <option value="all">Všechny ročníky</option>
+            ${seasons.map(s => `<option value="${s}" ${s===season?"selected":""}>${s}</option>`).join("")}
+          </select>
+          <input id="q" type="search" placeholder="Hledat hráče, soupeře…" value="${q.replaceAll('"','&quot;')}" />
+          <span class="muted">${list.length} výkonů</span>
+        </div>
+        <div style="overflow:auto;max-height:72vh">
+          <table class="grid">
+            <thead><tr><th>Datum</th><th>Hráč</th><th>Součet</th><th>Plné</th><th>Dorážka</th><th>Chyby</th><th>Soupeř</th><th>Výsledek</th><th class="hide-sm">Kuželna</th></tr></thead>
+            <tbody>${list.slice(0,500).map(p => `<tr>
+              <td>${p.datum}<div class="muted">${p.rocnik} · ${p.kolo}. kolo</div></td>
+              <td>${p.hrac}</td><td><b>${p.soucet ?? "—"}</b></td>
+              <td>${p.plne ?? "—"}</td><td>${p.dorazka ?? "—"}</td><td>${p.chyby ?? "—"}</td>
+              <td>${p.souper_hrac}<div class="muted">${p.souper} · ${p.souper_soucet ?? "—"}</div></td>
+              <td><span class="pill ${p.vysledek==="výhra"?"win":p.vysledek==="prohra"?"loss":"draw"}">${p.vysledek || "—"}</span></td>
+              <td class="hide-sm">${p.kuzelna}</td>
+            </tr>`).join("")}</tbody>
+          </table>
+        </div>`;
+    }
+
+    function playerKey(p){ return String(p.id_hrace || p.id || p.hrac); }
+    function performancesOf(player){
+      const id = player.id || player.id_hrace;
+      return DATA.players.filter(x => !x.mimo_statistiky && ((id && String(x.id_hrace) === String(id)) || x.hrac === player.hrac));
+    }
+    function summarize(list){
+      const nums = list.map(x => Number(x.soucet)).filter(n => !Number.isNaN(n));
+      const w = list.filter(x => x.vysledek === "výhra").length;
+      const l = list.filter(x => x.vysledek === "prohra").length;
+      const d = list.filter(x => x.vysledek === "remíza").length;
+      const avg = nums.length ? (nums.reduce((a,b)=>a+b,0)/nums.length) : 0;
+      const max = nums.length ? Math.max(...nums) : null;
+      const min = nums.length ? Math.min(...nums) : null;
+      const plne = list.map(x => Number(x.plne)).filter(n => !Number.isNaN(n));
+      const dor = list.map(x => Number(x.dorazka)).filter(n => !Number.isNaN(n));
+      const chy = list.map(x => Number(x.chyby)).filter(n => !Number.isNaN(n));
+      return {
+        starty: list.length, avg, max, min, w, l, d,
+        plne: plne.reduce((a,b)=>a+b,0),
+        dor: dor.reduce((a,b)=>a+b,0),
+        chy: chy.reduce((a,b)=>a+b,0)
+      };
+    }
+    function barColor(p){
+      if (p.vysledek === "výhra") return "#1f6d42";
+      if (p.vysledek === "prohra") return "#a83232";
+      if (p.vysledek === "remíza") return "#c9a45a";
+      return "#215d86";
+    }
+    function renderPlayerChart(list){
+      const rows = list.filter(p => p.soucet != null && p.soucet !== "").slice().reverse();
+      if (!rows.length) return `<div class="chart-box muted">Pro zvolený filtr nejsou číselné výkony k vykreslení.</div>`;
+      const w = Math.max(560, rows.length * 28);
+      const h = 260, padL = 36, padB = 58, padT = 24, padR = 12;
+      const vals = rows.map(p => Number(p.soucet) || 0);
+      const minPerf = Math.min(...vals);
+      const maxPerf = Math.max(...vals);
+      const minV = minPerf - 10;
+      const maxV = maxPerf + 10;
+      const span = Math.max(1, maxV - minV);
+      const innerW = w - padL - padR;
+      const innerH = h - padT - padB;
+      const gap = rows.length > 20 ? 2 : 4;
+      const barW = Math.max(8, innerW / rows.length - gap);
+      const yFor = v => padT + innerH - ((v - minV) / span) * innerH;
+      const ticks = [minV, Math.round(minV + span * 0.25), Math.round(minV + span * 0.5), Math.round(minV + span * 0.75), maxV];
+      const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
+      const bars = rows.map((p,i) => {
+        const x = padL + i * (barW + gap);
+        const y = yFor(Number(p.soucet)||0);
+        const bh = padT + innerH - y;
+        const title = `${p.datum} · ${p.rocnik} · ${p.kolo}. kolo · ${p.soucet} · ${p.kuzelna||""}`;
+        const label = `${p.kolo}`;
+        return `<g>
+          <rect x="${x}" y="${y}" width="${barW}" height="${bh}" rx="3" fill="${barColor(p)}">
+            <title>${title}</title>
+          </rect>
+          <text x="${x + barW/2}" y="${h-36}" text-anchor="middle" font-size="9" fill="#4e5b6a" transform="rotate(-55 ${x + barW/2} ${h-36})">${p.datum}</text>
+        </g>`;
+      }).join("");
+      return `<div class="chart-box">
+        <svg viewBox="0 0 ${w} ${h}" width="100%" height="280" role="img" aria-label="Sloupcový graf výkonů">
+          ${ticks.map(t => `<g>
+            <line x1="${padL}" x2="${w-padR}" y1="${yFor(t)}" y2="${yFor(t)}" stroke="#eadfcf"/>
+            <text x="${padL-6}" y="${yFor(t)+4}" text-anchor="end" font-size="10" fill="#4e5b6a">${t}</text>
+          </g>`).join("")}
+          <line x1="${padL}" x2="${w-padR}" y1="${yFor(avg)}" y2="${yFor(avg)}" stroke="#10263d" stroke-dasharray="4 4"/>
+          ${bars}
+        </svg>
+        <div class="chart-legend">
+          <span>sloupce = součet kuželek</span>
+          <span style="color:#1f6d42">■ výhra</span>
+          <span style="color:#a83232">■ prohra</span>
+          <span style="color:#c9a45a">■ remíza</span>
+          <span>tečkovaná čára = průměr ${Math.round(avg)}</span>
+          <span>rozsah ${minV}–${maxV} (nejhorší −10 / nejlepší +10)</span>
+        </div>
+      </div>`;
+    }
+    function renderPlayerCard(){
+      const all = performancesOf(selectedPlayer).slice().sort((a,b) => parseDate(b.datum)-parseDate(a.datum));
+      const seasonsP = [...new Set(all.map(x => x.rocnik).filter(Boolean))].sort().reverse();
+      const venuesP = [...new Set(all.map(x => x.kuzelna).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"cs"));
+      const oppsP = [...new Set(all.map(x => x.souper_hrac).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"cs"));
+      let list = all.filter(x =>
+        (playerSeason === "all" || x.rocnik === playerSeason) &&
+        (playerVenue === "all" || x.kuzelna === playerVenue) &&
+        (playerOpponent === "all" || x.souper_hrac === playerOpponent) &&
+        (playerPlace === "all" || x.misto === playerPlace)
+      );
+      if (playerSpan === "5") list = list.slice(0,5);
+      if (playerSpan === "10") list = list.slice(0,10);
+      const s = summarize(list);
+      const total = summarize(all);
+      return `
+        <div class="card-head">
+          <div>
+            <button class="back-btn" id="backPlayers">← Zpět na statistiku</button>
+            <h2 style="font-family:Fraunces,serif;margin:10px 0 4px">${selectedPlayer.hrac}</h2>
+            <div class="muted">ID ${selectedPlayer.id || selectedPlayer.id_hrace || "—"} · celkem ${total.starty} startů · průměr ${Math.round(total.avg)}</div>
+          </div>
+        </div>
+        <div class="filters">
+          <select id="playerSeason">
+            <option value="all">Všechny ročníky</option>
+            ${seasonsP.map(v => `<option value="${v}" ${v===playerSeason?"selected":""}>${v}</option>`).join("")}
+          </select>
+          <select id="playerVenue">
+            <option value="all">Všechny kuželny</option>
+            ${venuesP.map(v => `<option value="${v.replaceAll('"','&quot;')}" ${v===playerVenue?"selected":""}>${v}</option>`).join("")}
+          </select>
+          <select id="playerOpponent">
+            <option value="all">Všichni protihráči</option>
+            ${oppsP.map(v => `<option value="${v.replaceAll('"','&quot;')}" ${v===playerOpponent?"selected":""}>${v}</option>`).join("")}
+          </select>
+          <select id="playerPlace">
+            <option value="all" ${playerPlace==="all"?"selected":""}>Doma / venku</option>
+            <option value="doma" ${playerPlace==="doma"?"selected":""}>Doma</option>
+            <option value="venku" ${playerPlace==="venku"?"selected":""}>Venku</option>
+          </select>
+          <select id="playerSpan">
+            <option value="all" ${playerSpan==="all"?"selected":""}>Všechny zápasy</option>
+            <option value="5" ${playerSpan==="5"?"selected":""}>Posledních 5 zápasů</option>
+            <option value="10" ${playerSpan==="10"?"selected":""}>Posledních 10 zápasů</option>
+          </select>
+          <button class="chart-btn ${showChart?"active":""}" id="toggleChart">${showChart ? "Skrýt graf" : "Graf"}</button>
+        </div>
+        ${showChart ? renderPlayerChart(list) : ""}
+        <div class="balance">
+          <div class="title">${playerSeason==="all"?"Všechny ročníky":playerSeason}${playerVenue==="all"?"":" · "+playerVenue}</div>
+          <div class="num">${s.starty}</div>
+          <span class="chip">startů</span>
+          <span class="chip">průměr ${s.starty ? Math.round(s.avg) : "—"}</span>
+          <span class="chip">max ${s.max ?? "—"}</span>
+          <span class="chip">min ${s.min ?? "—"}</span>
+          <span class="chip">V–P–R ${s.w}–${s.l}–${s.d}</span>
+        </div>
+        ${selectedId ? matchModalHtml(DATA.matches.find(m => String(m.id)===String(selectedId))) : ""}
+        <div style="overflow:auto">
+          <table class="grid">
+            <thead>
+              <tr>
+                <th>Datum</th><th>Ročník</th><th>Kolo</th><th>Kuželna</th>
+                <th>Soupeř</th><th>Součet</th><th>Plné</th><th>Dorážka</th><th>Chyby</th><th>Výsledek</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${list.map(p => {
+                const res = pairingResult(p);
+                const mid = (matchByPerf(p)||{}).id || p.id_zapasu;
+                return `<tr data-id="${mid}" data-hrac="${(p.hrac||"").replaceAll('"','&quot;')}" style="cursor:pointer">
+                <td>${p.datum}</td>
+                <td>${p.rocnik}</td>
+                <td>${p.kolo}</td>
+                <td>${p.kuzelna || "—"}</td>
+                <td>${p.souper_hrac || "—"}<div class="muted">${p.souper || ""}</div>${p.poznamka?`<div class="muted">${p.poznamka}</div>`:""}</td>
+                <td><b>${p.soucet ?? "—"}</b></td>
+                <td>${p.plne ?? "—"}</td>
+                <td>${p.dorazka ?? "—"}</td>
+                <td>${p.chyby ?? "—"}</td>
+                <td><span class="pill ${res==="výhra"?"win":res==="prohra"?"loss":"draw"}">${res}</span></td>
+              </tr>`;
+              }).join("") || `<tr><td colspan="10" class="muted">Pro zvolený filtr nejsou žádné výkony.</td></tr>`}
+            </tbody>
+          </table>
+        </div>`;
+    }
+    function renderStats(){
+      if (selectedPlayer) return renderPlayerCard();
+      const list = DATA.stats.slice().sort((a,b)=>(Number(b.starty)||0)-(Number(a.starty)||0) || String(a.hrac).localeCompare(String(b.hrac),"cs"));
+      return `<div style="overflow:auto">
+        <table class="grid">
+          <thead><tr><th>#</th><th>Hráč</th><th>Starty</th><th>Průměr</th><th>Plné</th><th>Dorážka</th><th>Chyby</th><th>Max</th><th>V / P</th></tr></thead>
+          <tbody>${list.map((p,i)=>{
+            const n=Number(p.starty)||0;
+            const a=v=> n && v!=null ? Math.round(Number(v)/n) : "—";
+            return `<tr class="player-row" data-player="${encodeURIComponent(p.hrac)}" data-pid="${p.id ?? ""}">
+            <td>${i+1}</td>
+            <td class="player-link">${p.hrac}</td>
+            <td>${p.starty}</td>
+            <td><b>${Math.round(Number(p.prumer||0))}</b></td>
+            <td>${a(p.plne)}</td>
+            <td>${a(p.dorazka)}</td>
+            <td>${a(p.chyby)}</td>
+            <td>${p.max ?? "—"}</td>
+            <td>${p.vyhry ?? 0} / ${p.prohry ?? 0}</td>
+          </tr>`;}).join("")}</tbody>
+        </table>
+      </div>`;
+    }
+
+    function parseDate(s){
+      const m = String(s||"").match(/(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+      if (!m) return 0;
+      return Date.UTC(+m[3], +m[2]-1, +m[1]);
+    }
+    function oppRows(){
+      if (DATA.opp && DATA.opp.length) return DATA.opp;
+      return DATA.players.filter(p => p.souper && p.souper_hrac).map(p => ({
+        rocnik: p.rocnik, kolo: p.kolo, datum: p.datum, id_zapasu: p.id_zapasu,
+        tym: p.souper, souper: p.tym || "TJ Teplice Letná D", hrac: p.souper_hrac,
+        soucet: p.souper_soucet, plne: p.souper_plne, dorazka: p.souper_dorazka,
+        chyby: p.souper_chyby, sb: p.souper_sb, misto: p.misto==="doma"?"venku":"doma",
+        kuzelna: p.kuzelna
+      }));
+    }
+    function homeVenues(){
+      const map = {};
+      (DATA.matches||[]).forEach(m => {
+        if (m.misto==="venku" && m.souper && m.kuzelna) map[m.souper] = m.kuzelna;
+        if (m.misto==="doma" && m.kuzelna) map["TJ Teplice Letná D"] = m.kuzelna;
+      });
+      (DATA.players||[]).forEach(p => {
+        if (p.misto==="venku" && p.souper && p.kuzelna) map[p.souper] = p.kuzelna;
+      });
+      map["SK Verneřice B"] = map["SK Verneřice B"] || "SK Verneřice";
+      return map;
+    }
+    function venueOf(r){
+      if (r.kuzelna) return r.kuzelna;
+      const hv = homeVenues();
+      if (r.misto==="doma") return hv[r.tym] || r.tym || "—";
+      return hv[r.souper] || r.souper || "—";
+    }
+    function last10Avg(rows){
+      const vals = rows.slice().sort((a,b)=>parseDate(b.datum)-parseDate(a.datum))
+        .map(r => Number(r.soucet)).filter(n => n>0).slice(0,10);
+      if (!vals.length) return null;
+      return vals.reduce((a,b)=>a+b,0)/vals.length;
+    }
+    function renderOpponents(){
+      const rows = oppRows();
+      const s = oppQ.trim().toLowerCase();
+      const vsTeplice = new Set(DATA.players.map(p => p.souper).filter(Boolean));
+      const teams = [...new Set(rows.map(r => r.tym).filter(t => t && !/Teplice Letná D/.test(t) && (vsTeplice.has(t) || [...vsTeplice].some(v => v && t.includes(v.split(" ")[0])))))].sort((a,b)=>a.localeCompare(b,"cs"));
+      const teamList = teams.length ? teams : [...new Set(rows.map(r => r.tym).filter(t => t && !/Teplice Letná D/.test(t)))].sort((a,b)=>a.localeCompare(b,"cs"));
+      if (!oppTeam){
+        const shown = teamList.filter(t => {
+          if (!s) return true;
+          if (t.toLowerCase().includes(s)) return true;
+          return rows.some(r => r.tym===t && String(r.hrac).toLowerCase().includes(s));
+        });
+        return `<div class="season-grid">${shown.map(t => {
+            const rs = rows.filter(r => r.tym===t);
+            const nP = new Set(rs.map(r => r.hrac)).size;
+            return `<button class="season-card" data-oppteam="${encodeURIComponent(t)}">
+              <div class="yr" style="font-size:18px">${t}</div>
+              <div class="place">${nP} hráčů · ${rs.length} výkonů</div>
+            </button>`;
+          }).join("")}</div>`;
+      }
+      const teamRows = rows.filter(r => r.tym===oppTeam);
+      if (!oppPlayer){
+        const names = [...new Set(teamRows.map(r => r.hrac))]
+          .filter(n => !s || n.toLowerCase().includes(s) || oppTeam.toLowerCase().includes(s))
+          .sort((a,b)=> teamRows.filter(r=>r.hrac===b).length - teamRows.filter(r=>r.hrac===a).length || a.localeCompare(b,"cs"));
+        return `<div class="filters">
+            <button class="back-btn" id="backOppTeams">← Týmy</button>
+          </div>
+          <div class="balance"><div class="title">${oppTeam}</div></div>
+          <div style="overflow:auto"><table class="grid">
+            <thead><tr><th>Hráč</th><th>Starty</th><th>Průměr posledních 10</th><th>Max</th></tr></thead>
+            <tbody>${names.map(n => {
+              const rs = teamRows.filter(r => r.hrac===n);
+              const avg = last10Avg(rs);
+              const mx = Math.max(0, ...rs.map(r => Number(r.soucet)||0));
+              return `<tr class="player-row" data-oppplayer="${encodeURIComponent(n)}" data-oppteam="${encodeURIComponent(oppTeam)}">
+                <td class="player-link">${n}</td><td>${rs.length}</td>
+                <td><b>${avg?Math.round(avg):"—"}</b></td><td>${mx||"—"}</td></tr>`;
+            }).join("")}</tbody>
+          </table></div>`;
+      }
+      const allList = teamRows.filter(r => r.hrac===oppPlayer)
+        .slice().sort((a,b)=>parseDate(b.datum)-parseDate(a.datum));
+      const venues = [...new Set(allList.map(venueOf).filter(v => v && v!=="—"))].sort((a,b)=>a.localeCompare(b,"cs"));
+      let list = allList.filter(r =>
+        (oppVenue==="all" || venueOf(r)===oppVenue) &&
+        (oppPlace==="all" || r.misto===oppPlace)
+      );
+      if (oppSpan==="5") list = list.slice(0,5);
+      if (oppSpan==="10") list = list.slice(0,10);
+      const avgVals = list.map(r => Number(r.soucet)).filter(n => n>0);
+      const avgAll = avgVals.length ? Math.round(avgVals.reduce((a,b)=>a+b,0)/avgVals.length) : "—";
+      return `<div class="filters">
+          <button class="back-btn" id="backOppPlayers">← ${oppTeam}</button>
+          <select id="oppVenue">
+            <option value="all">Kuželny</option>
+            ${venues.map(v => `<option value="${v.replaceAll('"','&quot;')}" ${v===oppVenue?"selected":""}>${v}</option>`).join("")}
+          </select>
+          <select id="oppPlace">
+            <option value="all" ${oppPlace==="all"?"selected":""}>Doma / venku</option>
+            <option value="doma" ${oppPlace==="doma"?"selected":""}>Doma</option>
+            <option value="venku" ${oppPlace==="venku"?"selected":""}>Venku</option>
+          </select>
+          <select id="oppSpan">
+            <option value="all" ${oppSpan==="all"?"selected":""}>Všechny zápasy</option>
+            <option value="5" ${oppSpan==="5"?"selected":""}>Posledních 5 zápasů</option>
+            <option value="10" ${oppSpan==="10"?"selected":""}>Posledních 10 zápasů</option>
+          </select>
+        </div>
+        <div class="balance"><div class="title">${oppPlayer}</div><div class="num">${avgAll}</div><span class="chip">průměr dle filtru</span><span class="chip">${list.length} zápasů</span></div>
+        <div style="overflow:auto"><table class="grid">
+          <thead><tr><th>Datum</th><th>Kuželna</th><th>Výkon</th><th>Plné</th><th>Dorážka</th><th>Chyby</th></tr></thead>
+          <tbody>${list.map(r => `<tr>
+            <td>${r.datum}<div class="muted">${r.rocnik} · ${r.kolo}. kolo</div></td>
+            <td>${venueOf(r)}</td>
+            <td><b>${r.soucet ?? "—"}</b></td>
+            <td>${r.plne ?? "—"}</td><td>${r.dorazka ?? "—"}</td><td>${r.chyby ?? "—"}</td>
+          </tr>`).join("")}</tbody>
+        </table></div>`;
+    }
+
+
+    function renderHalls(){
+      return `<div class="balance"><div class="title">Databáze kuželen</div><span class="chip">${halls.length} kuželen</span></div>
+        <div class="hall-form">
+          <input id="newHallName" placeholder="Název přesně dle webu vysledky.kuzelky.cz" />
+          <input id="newHallKm" type="number" min="0" step="1" placeholder="Vzdálenost km" style="width:140px" />
+          <button class="add-btn" id="addHall">Přidej kuželnu</button>
+        </div>
+        <p class="muted" style="margin:0">Název přesně dle webu vysledky.kuzelky.cz.</p>
+        <p class="muted" style="margin:4px 0 14px">Vzdálenost dle navigace mapy.com od kuželny ke kuželně (1 cesta).</p>
+        <div style="overflow:auto"><table class="grid">
+          <thead><tr><th>Kuželna</th><th>Vzdálenost</th></tr></thead>
+          <tbody>${halls.slice().sort((a,b)=>a.name.localeCompare(b.name,"cs")).map(h =>
+            `<tr><td>${h.name}</td><td><b>${h.km}</b> km</td></tr>`).join("")}</tbody>
+        </table></div>`;
+    }
+    function awayInRange(){
+      const a=parseDate(tripFrom), b=parseDate(tripTo);
+      return allMatches.filter(m => {
+        if (m.misto!=="venku") return false;
+        const hall=(m.kuzelna||"")+" "+(m.souper||"");
+        if (/Teplice Letná/i.test(hall)) return false;
+        const d=parseDate(m.datum);
+        return d>=a && d<=b;
+      }).sort((x,y)=>parseDate(x.datum)-parseDate(y.datum));
+    }
+    function matchTripKm(m){
+      const h=hallOf(m);
+      return h ? 2*(Number(h.km)||0) : 0;
+    }
+    function seasonAwayMatches(rocnik){
+      return allMatches.filter(m => {
+        if (m.misto!=="venku") return false;
+        if (rocnik && m.rocnik!==rocnik) return false;
+        const hall=(m.kuzelna||"")+" "+(m.souper||"");
+        if (/Teplice Letná/i.test(hall)) return false;
+        return true;
+      }).sort((x,y)=>parseDate(x.datum)-parseDate(y.datum));
+    }
+    function renderTrips(){
+      const seasons=[...new Set((DATA.matches||[]).map(m=>m.rocnik).filter(Boolean))].sort((a,b)=>String(b).localeCompare(String(a)));
+      if (!tripSeason || !seasons.includes(tripSeason)) tripSeason = seasons[0] || tripSeason;
+      const seasonList=seasonAwayMatches(tripSeason);
+      const list=awayInRange().filter(m => !tripSeason || m.rocnik===tripSeason);
+      const seasonKm=seasonList.reduce((a,m)=>a+matchTripKm(m),0);
+      const sums={}; DRIVERS.forEach(n=>sums[n]=0);
+      list.forEach(m=>{
+        const who=tripDrivers[m.id];
+        if(who) sums[who]+=matchTripKm(m);
+      });
+      const assignedKm=Object.values(sums).reduce((a,b)=>a+b,0);
+      const budget=Number(tripMoneyMap[tripSeason]||tripMoneyMap[moneyKey()]||0);
+      const perKm = seasonKm && budget ? budget / seasonKm : 0;
+      const perKmShow = perKm ? Math.round(perKm) : 0;
+      return `<div class="filters">
+          <label>Sezona <select id="tripSeason">${seasons.map(s=>`<option value="${s}" ${s===tripSeason?"selected":""}>${s}</option>`).join("")}</select></label>
+          <label>Datum od <input type="date" id="tripFrom" value="${toInputDate(tripFrom)}" /></label>
+          <label>Datum do <input type="date" id="tripTo" value="${toInputDate(tripTo)}" /></label>
+        </div>
+        <div class="balance">
+          <div class="title">Sezona ${tripSeason}</div>
+          <span class="chip">${seasonList.length} venkovních zápasů</span>
+          <span class="chip">${seasonKm} km tam a zpět</span>
+          <span class="chip">${perKmShow} Kč / km</span>
+        </div>
+        <div class="trip-money">
+          <input id="tripBudget" type="number" min="0" step="1" value="${budget||""}" placeholder="Kč na sezonu" />
+          <span class="muted">Kč na sezonu · 1 km = ${perKmShow} Kč (zaokrouhleno na celé koruny)</span>
+        </div>
+        <div style="overflow:auto;margin-bottom:16px"><table class="grid">
+          <thead><tr><th>Datum</th><th>Kuželna</th><th>Soupeř</th><th>Km 1 cesta</th><th>Tam + zpět</th><th>Náklady</th><th>Kdo jel</th></tr></thead>
+          <tbody>${list.map(m=>{
+            const h=hallOf(m);
+            const who=tripDrivers[m.id]||"";
+            const one=h?Number(h.km)||0:0;
+            const both=one*2;
+            const cost=perKm ? Math.round(both*perKm) : 0;
+            return `<tr>
+              <td>${m.datum}<div class="muted">${m.rocnik} · ${m.kolo}. kolo</div></td>
+              <td>${h?h.name:(m.kuzelna||"—")}</td>
+              <td>${m.souper||""}</td>
+              <td>${h?one+" km":"?"}</td>
+              <td><b>${h?both+" km":"?"}</b></td>
+              <td><b>${h?cost+" Kč":"—"}</b></td>
+              <td><select data-tripid="${m.id}">
+                <option value="">—</option>
+                ${DRIVERS.map(n=>`<option value="${n}" ${n===who?"selected":""}>${n}</option>`).join("")}
+              </select></td>
+            </tr>`;
+          }).join("") || `<tr><td colspan="7" class="muted">Ve zvoleném období není žádný venkovní zápas.</td></tr>`}</tbody>
+        </table></div>
+        <div class="split-grid">
+          <div>
+            <div class="balance"><div class="title">Najeté km</div><span class="chip">Celkem cesta tam a zpět dle mapy.com</span></div>
+            <table class="grid">
+              <thead><tr><th>Řidič</th><th>Km</th><th>Náklady</th></tr></thead>
+              <tbody>${DRIVERS.map(n=>`<tr><td>${n}</td><td><b>${sums[n]}</b></td><td>${perKm?Math.round(sums[n]*perKm):0} Kč</td></tr>`).join("")}
+              <tr><td><b>Přiřazeno</b></td><td><b>${assignedKm}</b></td><td><b>${perKm?Math.round(assignedKm*perKm):0} Kč</b></td></tr>
+              <tr><td><b>Celá sezona</b></td><td><b>${seasonKm}</b></td><td><b>${budget||0} Kč</b></td></tr></tbody>
+            </table>
+          </div>
+          <div>
+            <div class="balance"><div class="title">Peníze na cesty</div></div>
+            <table class="grid">
+              <thead><tr><th>Řidič</th><th>Podíl</th></tr></thead>
+              <tbody>${DRIVERS.map(n=>{
+                const share = assignedKm && budget ? Math.round(budget * sums[n] / assignedKm) : 0;
+                return `<tr><td>${n}</td><td><b>${share}</b> Kč</td></tr>`;
+              }).join("")}
+              <tr><td><b>Rozděleno dle km</b></td><td><b>${assignedKm && budget ? DRIVERS.reduce((a,n)=>a+Math.round(budget*sums[n]/assignedKm),0) : 0}</b> Kč</td></tr>
+              </tbody>
+            </table>
+            <p class="muted">Náklady na zápas = (km tam a zpět) × (Kč na sezonu ÷ km sezony).</p>
+          </div>
+        </div>`;
+    }
+
+    function render(){
+      kpis();
+      const root = $("#app");
+      root.innerHTML = tab==="matches" ? renderMatches() : tab==="opponents" ? renderOpponents() : tab==="halls" ? renderHalls() : tab==="trips" ? renderTrips() : renderStats();
+      const sel = $("#season"); if (sel) sel.onchange = e => { season = e.target.value; selectedId = null; selectedPairHrac = null; render(); };
+      const inp = $("#q"); if (inp) inp.oninput = e => { q = e.target.value; render(); };
+      root.querySelectorAll("tbody tr[data-id]").forEach(tr => {
+        tr.style.cursor = "pointer";
+        tr.onclick = (e) => {
+          if (e.target.closest("button, select, input, a")) return;
+          selectedId = tr.getAttribute("data-id");
+          selectedPairHrac = tr.getAttribute("data-hrac") || null;
+          if (selectedId) render();
+        };
+      });
+      const closeMatch = $("#closeMatch");
+      if (closeMatch) closeMatch.onclick = (e) => { e.stopPropagation(); selectedId = null; selectedPairHrac = null; render(); };
+      const matchModal = $("#matchModal");
+      if (matchModal) matchModal.onclick = (e) => { if (e.target.id === "matchModal") { selectedId = null; selectedPairHrac = null; render(); } };
+      root.querySelectorAll(".season-card").forEach(btn => {
+        btn.onclick = () => { openedSeason = btn.dataset.season; seasonOverview = false; showTable = true; selectedId = null; selectedPairHrac = null; render(); };
+      });
+      const backSeasons = $("#backSeasons");
+      if (backSeasons) backSeasons.onclick = () => { seasonOverview = true; selectedId = null; selectedPairHrac = null; render(); };
+      const btnTable = $("#btnTable");
+      if (btnTable) btnTable.onclick = () => { showTable = true; selectedId = null; render(); };
+      const btnMatches = $("#btnMatches");
+      if (btnMatches) btnMatches.onclick = () => { showTable = false; selectedId = null; render(); };
+      const oppInp = $("#oppQ");
+      if (oppInp) oppInp.oninput = e => { oppQ = e.target.value; render(); };
+      root.querySelectorAll("[data-oppteam]").forEach(btn => {
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          const t = decodeURIComponent(btn.dataset.oppteam);
+          if (!t) return;
+          tab = "opponents";
+          document.querySelectorAll("nav.tabs button").forEach(b => b.classList.toggle("active", b.dataset.tab==="opponents"));
+          oppTeam = t; oppPlayer = null; oppQ = ""; selectedId = null; selectedPairHrac = null; render();
+        };
+      });
+      root.querySelectorAll("[data-oppplayer]").forEach(el => {
+        el.onclick = (e) => {
+          e.stopPropagation();
+          const n = decodeURIComponent(el.dataset.oppplayer);
+          if (el.dataset.oppteam) oppTeam = decodeURIComponent(el.dataset.oppteam);
+          oppPlayer = n; oppVenue="all"; oppPlace="all"; oppSpan="all"; tab = "opponents";
+          document.querySelectorAll("nav.tabs button").forEach(b => b.classList.toggle("active", b.dataset.tab==="opponents"));
+          selectedId = null; selectedPairHrac = null; render();
+        };
+      });
+      const backOppTeams = $("#backOppTeams");
+      if (backOppTeams) backOppTeams.onclick = () => { oppTeam = null; oppPlayer = null; render(); };
+      const backOppPlayers = $("#backOppPlayers");
+      if (backOppPlayers) backOppPlayers.onclick = () => { oppPlayer = null; oppVenue="all"; oppPlace="all"; oppSpan="all"; render(); };
+      const ov = $("#oppVenue"); if (ov) ov.onchange = e => { oppVenue = e.target.value; render(); };
+      const op = $("#oppPlace"); if (op) op.onchange = e => { oppPlace = e.target.value; render(); };
+      const os = $("#oppSpan"); if (os) os.onchange = e => { oppSpan = e.target.value; render(); };
+      function openPlayer(el){
+        const name = decodeURIComponent(el.dataset.player);
+        const pid = el.dataset.pid;
+        selectedPlayer = DATA.stats.find(p => String(p.id) === String(pid) && pid) || DATA.stats.find(p => p.hrac === name) || {hrac:name, id:pid};
+        playerSeason = "all";
+        playerVenue = "all";
+        playerOpponent = "all";
+        playerPlace = "all";
+        playerSpan = "all";
+        showChart = false;
+        render();
+      }
+      root.querySelectorAll(".player-row").forEach(tr => {
+        if (tr.dataset.oppplayer) return;
+        tr.onclick = () => openPlayer(tr);
+      });
+      root.querySelectorAll(".player-link[data-player]").forEach(btn => {
+        btn.onclick = (e) => { e.stopPropagation(); openPlayer(btn); };
+      });
+      const back = $("#backPlayers");
+      if (back) back.onclick = () => { selectedPlayer = null; render(); };
+      const ps = $("#playerSeason");
+      if (ps) ps.onchange = e => { playerSeason = e.target.value; render(); };
+      const pv = $("#playerVenue");
+      if (pv) pv.onchange = e => { playerVenue = e.target.value; render(); };
+      const po = $("#playerOpponent");
+      if (po) po.onchange = e => { playerOpponent = e.target.value; render(); };
+      const pp = $("#playerPlace");
+      if (pp) pp.onchange = e => { playerPlace = e.target.value; render(); };
+      const psp = $("#playerSpan");
+      if (psp) psp.onchange = e => { playerSpan = e.target.value; render(); };
+      const cg = $("#toggleChart");
+      if (cg) cg.onclick = () => { showChart = !showChart; render(); };
+      const addHall = $("#addHall");
+      if (addHall) addHall.onclick = () => {
+        const name = ($("#newHallName").value||"").trim();
+        const km = Number($("#newHallKm").value);
+        if (!name || !(km>=0)) return;
+        halls.push({name, km, keys:[name.toLowerCase()]});
+        saveHalls(halls);
+        render();
+      };
+      const ts = $("#tripSeason");
+      if (ts) ts.onchange = e => {
+        tripSeason = e.target.value;
+        const y=Number(String(tripSeason).split("/")[0]);
+        if (y){ tripFrom="01.09."+y; tripTo="31.08."+(y+1); }
+        render();
+      };
+      const tf = $("#tripFrom"); if (tf) tf.onchange = e => { tripFrom = fromInputDate(e.target.value); render(); };
+      const tt = $("#tripTo"); if (tt) tt.onchange = e => { tripTo = fromInputDate(e.target.value); render(); };
+      root.querySelectorAll("select[data-tripid]").forEach(sel => {
+        sel.onchange = e => {
+          tripDrivers[sel.dataset.tripid] = e.target.value;
+          saveDrivers(tripDrivers);
+          render();
+        };
+      });
+      const tb = $("#tripBudget");
+      if (tb) tb.onchange = e => {
+        tripMoneyMap[tripSeason] = Number(e.target.value)||0;
+        tripMoneyMap[moneyKey()] = Number(e.target.value)||0;
+        saveMoney(tripMoneyMap);
+        render();
+      };
+    }
+    document.querySelectorAll("nav.tabs button").forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll("nav.tabs button").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        tab = btn.dataset.tab;
+        render();
+      };
+    });
+    render();
+    function showLastUpdate(){
+      const el = $("#updateTime");
+      if (!el) return;
+      const ts = localStorage.getItem("tepliceD_lastUpdate");
+      el.textContent = ts ? ("Poslední aktualizace: " + ts) : "Zatím neaktualizováno";
+    }
+    function applySavedResults(){
+      try {
+        const patch = JSON.parse(localStorage.getItem("tepliceD_resultPatch")||"null");
+        if (!patch) return;
+        (patch.matches||[]).forEach(p => {
+          const m = DATA.matches.find(x => x.rocnik==="2026/2027" && Number(x.kolo)===Number(p.kolo));
+          if (m) Object.assign(m, p);
+        });
+        const pkey = r => (r.hrac||"")+"|"+(r.datum||"")+"|"+(r.soucet||"");
+        const haveP = new Set(DATA.players.map(pkey));
+        (patch.players||[]).forEach(r => { if (!haveP.has(pkey(r))) { DATA.players.push(r); haveP.add(pkey(r)); } });
+        const okey = r => [r.rocnik,r.hrac,r.datum,r.soucet,r.tym].join("|");
+        DATA.opp = DATA.opp || [];
+        const haveO = new Set(DATA.opp.map(okey));
+        (patch.opp||[]).forEach(r => { if (!haveO.has(okey(r))) { DATA.opp.push(r); haveO.add(okey(r)); } });
+        if (patch.players && patch.players.length && typeof rebuildStats==="function") rebuildStats();
+        if (patch.place) {
+          DATA.meta = DATA.meta || {};
+          DATA.meta.umisteni = Object.assign({}, DATA.meta.umisteni, {"2026/2027": patch.place});
+          Object.assign(PLACEMENT, DATA.meta.umisteni);
+        }
+      } catch(e){}
+    }
+    function normTeam(s){
+      return String(s||"").replace(/\s+/g," ").replace(/Sokol Ústí nad Labem/g,"Sokol Ústí n. L.").replace(/Sokol Roudnice n\. L\./g,"Sokol Roudnice nad Labem").trim();
+    }
+    async function fetchHtml(url){
+      const attempts = [
+        "https://api.allorigins.win/get?url=" + encodeURIComponent(url),
+        "https://api.allorigins.win/raw?url=" + encodeURIComponent(url),
+        "https://r.jina.ai/http://" + url.replace(/^https?:\/\//,""),
+        url
+      ];
+      let lastErr;
+      for (const u of attempts){
+        try {
+          const res = await fetch(u, {mode:"cors"});
+          if (!res.ok) throw new Error("HTTP "+res.status);
+          const raw = await res.text();
+          let html = raw;
+          if (raw.trim().startsWith("{")) {
+            try { const j=JSON.parse(raw); html = j.contents || j.body || raw; } catch(e){}
+          }
+          if (html && html.length > 400 && /kuzelky|Teplice|TABULKA|kolo/i.test(html)) return html;
+        } catch(e){ lastErr = e; }
+      }
+      throw lastErr || new Error("nelze načíst");
+    }
+    function parsePlace(html){
+      const t = html.replace(/<[^>]+>/g," ").replace(/\s+/g," ");
+      const m = t.match(/(\d+)\.\s*TJ Teplice Letná D/);
+      return m ? (m[1] + ". místo") : null;
+    }
+    function parseAllMatches(html, kolo){
+      const text = html.replace(/<script[\s\S]*?<\/script>/gi," ").replace(/<[^>]+>/g," ").replace(/\u00a0/g," ").replace(/\s+/g," ");
+      const links = [...html.matchAll(/detail-zapasu\/(okresni-prebor-b-2026-2027-kolo-\d+-[a-z0-9-]+-muzi-[a-z0-9-]+-muzi)/g)].map(x=>x[1]);
+      const out=[];
+      const re = /(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})\s+(\d{1,2}:\d{2})\s+(.+?)\s+(?:(\d{3,5})\s+([0-6])\s+([0-6])\s+(\d{3,5})\s+)?(.+?)(?=\s+\d{1,2}\.\s*\d{1,2}\.\s*\d{4}|\s+Video\s|\s+Soupisky|\s+TABULKA|$)/g;
+      let m, i=0;
+      while ((m = re.exec(text))){
+        const home = normTeam(m[5]).replace(/\.$/,"").replace(/(.+)\s+\1/,"$1").trim();
+        const away = normTeam(m[10]).replace(/\.$/,"").replace(/(.+)\s+\1/,"$1").trim();
+        if (!home || !away || home.length>60 || away.length>60) continue;
+        const row = {
+          kolo:Number(kolo),
+          datum: Number(m[1])+"."+Number(m[2])+"."+m[3],
+          cas:m[4], home, away,
+          slug: links[i] || null
+        };
+        if (m[6]!=null){
+          row.played=true;
+          row.kuzelky_home=Number(m[6]); row.body_home=Number(m[7]);
+          row.body_away=Number(m[8]); row.kuzelky_away=Number(m[9]);
+        } else row.played=false;
+        out.push(row); i++;
+      }
+      return out;
+    }
+    function lastPlayedTeplice(){
+      const list = DATA.matches.filter(m => m.rocnik==="2026/2027" && played(m));
+      list.sort((a,b)=>parseDate(a.datum)-parseDate(b.datum));
+      return list.length ? list[list.length-1] : null;
+    }
+    function rebuildStats(){
+      const map = {};
+      DATA.players.forEach(p => {
+        if (p.mimo_statistiky) return;
+        const k = p.hrac;
+        if (!k) return;
+        if (!map[k]) map[k] = {poradi:0,hrac:k,id:p.id_hrace,rocniky:new Set(),kuzelny:new Set(),starty:0,doma:0,venku:0,soucet:0,plne:0,dorazka:0,chyby:0,max:0,min:9999,vyhry:0,prohry:0,remizy:0};
+        const s=map[k];
+        s.starty++;
+        if (p.rocnik) s.rocniky.add(p.rocnik);
+        if (p.kuzelna) s.kuzelny.add(p.kuzelna);
+        if (p.misto==="doma") s.doma++; else if (p.misto==="venku") s.venku++;
+        const sc=Number(p.soucet)||0;
+        s.soucet+=sc; s.plne+=Number(p.plne)||0; s.dorazka+=Number(p.dorazka)||0; s.chyby+=Number(p.chyby)||0;
+        if (sc>s.max) s.max=sc;
+        if (sc && sc<s.min) s.min=sc;
+        if (p.vysledek==="výhra") s.vyhry++;
+        else if (p.vysledek==="prohra") s.prohry++;
+        else if (p.vysledek==="remíza") s.remizy++;
+      });
+      DATA.stats = Object.values(map).map(s => ({
+        ...s,
+        rocniky:[...s.rocniky].sort().join(", "),
+        kuzelna:[...s.kuzelny].join(", "),
+        prumer: s.starty? s.soucet/s.starty : 0,
+        min: s.min===9999?0:s.min,
+        pct: s.starty? s.vyhry/s.starty : 0
+      })).sort((a,b)=>(b.starty-a.starty)||a.hrac.localeCompare(b.hrac,"cs"));
+    }
+    function parseDetailPlayers(html, meta){
+      const names=[];
+      for (const m of html.matchAll(/detail-hrace\/[^"]+">([^<]+)/g)){
+        const n=m[1].trim();
+        if (n && !names.includes(n)) names.push(n);
+      }
+      const tables=[];
+      const tre=/<table[\s\S]*?<\/table>/gi;
+      let tm;
+      while ((tm=tre.exec(html))){
+        const rows=[];
+        const rr=/<tr[\s\S]*?<\/tr>/gi;
+        let r;
+        while ((r=rr.exec(tm[0]))){
+          const cells=[...r[0].matchAll(/<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi)].map(c=>c[1].replace(/<[^>]+>/g,"").trim());
+          if (cells.length) rows.push(cells);
+        }
+        if (rows[0] && rows[0].length>=14) tables.push(rows);
+      }
+      const pairs=[];
+      for (let i=0;i+1<names.length && pairs.length<tables.length;i+=2){
+        const row = tables[pairs.length][1] || [];
+        const take=(off)=>({
+          plne:Number(row[off+1]||0), dorazka:Number(row[off+2]||0), chyby:Number(row[off+3]||0),
+          soucet:Number(row[off+4]||0), sb:Number(row[off+5]||0)
+        });
+        pairs.push({home:names[i], away:names[i+1], hs:take(0), as:take(8)});
+      }
+      return pairs;
+    }
+    async function aktualizovat(){
+      const btn = $("#btnUpdate");
+      const msg = $("#updateMsg");
+      btn.disabled = true;
+      msg.textContent = "Hledám zápasy od posledního výsledku D…";
+      if (location.protocol === "file:") {
+        msg.textContent = "Aktualizace z disku nejde. Nahrajte aplikaci na https://.";
+        btn.disabled = false;
+        return;
+      }
+      const last = lastPlayedTeplice();
+      const lastTs = last ? parseDate(last.datum) : 0;
+      const today = new Date();
+      const todayTs = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+      const base = "https://vysledky.kuzelky.cz/detail-souteze/okresni-prebor-b-2026-2027";
+      const patch = {matches:[], players:[], opp:[], place:null};
+      try {
+        const first = await fetchHtml(base);
+        patch.place = parsePlace(first);
+        const wanted=[];
+        for (let k=1;k<=18;k++){
+          msg.textContent = "Prohlížím "+k+". kolo…";
+          const html = await fetchHtml(base + (k===1?"":"?round="+k));
+          parseAllMatches(html,k).forEach(row => {
+            const ts=parseDate(row.datum);
+            if (ts>lastTs && ts<=todayTs) wanted.push(row);
+          });
+        }
+        for (const row of wanted){
+          if (row.slug){
+            msg.textContent = "Načítám "+row.datum+" "+(row.home||"")+"…";
+            try {
+              const det = await fetchHtml("https://vysledky.kuzelky.cz/detail-zapasu/"+row.slug);
+              row.pairs = parseDetailPlayers(det, row);
+            } catch(e){ row.pairs=[]; }
+          }
+          const involves = /Teplice Letná D/i.test(row.home+" "+row.away);
+          if (involves && row.played){
+            const weHome=/Teplice Letná D/i.test(row.home);
+            patch.matches.push({
+              kolo:row.kolo, datum:row.datum, cas:row.cas,
+              souper: weHome?row.away:row.home,
+              misto: weHome?"doma":"venku",
+              odehrano:"ano",
+              body_td: weHome?row.body_home:row.body_away,
+              body_opp: weHome?row.body_away:row.body_home,
+              vysledek: (weHome?row.body_home:row.body_away)+":"+(weHome?row.body_away:row.body_home),
+              kuzelky_td: weHome?row.kuzelky_home:row.kuzelky_away,
+              kuzelky_opp: weHome?row.kuzelky_away:row.kuzelky_home
+            });
+            (row.pairs||[]).forEach((pr,idx)=>{
+              const ours = weHome?pr.hs:pr.as;
+              const theirs = weHome?pr.as:pr.hs;
+              const res = ours.soucet>theirs.soucet?"výhra":ours.soucet<theirs.soucet?"prohra":"remíza";
+              patch.players.push({
+                rocnik:"2026/2027", kolo:row.kolo, id_zapasu:row.slug||("K"+row.kolo),
+                datum:row.datum, kuzelna: hallOf({kuzelna:"",souper:weHome?row.away:row.home})?.name || "",
+                misto: weHome?"doma":"venku", souper: weHome?row.away:row.home,
+                poradi:idx+1, hrac: weHome?pr.home:pr.away,
+                plne:ours.plne, dorazka:ours.dorazka, chyby:ours.chyby, soucet:ours.soucet, sb:ours.sb,
+                souper_hrac: weHome?pr.away:pr.home, souper_soucet:theirs.soucet,
+                souper_plne:theirs.plne, souper_dorazka:theirs.dorazka, souper_chyby:theirs.chyby, souper_sb:theirs.sb,
+                vysledek:res
+              });
+            });
+          }
+          (row.pairs||[]).forEach((pr,idx)=>{
+            const mid=row.slug||("OPB-2026-27-K"+row.kolo+"-"+idx);
+            const kuz = hallOf({kuzelna:"",souper:row.home})?.name || row.home;
+            patch.opp.push({rocnik:"2026/2027",kolo:row.kolo,id_zapasu:mid,datum:row.datum,tym:row.home,souper:row.away,hrac:pr.home,soucet:pr.hs.soucet,plne:pr.hs.plne,dorazka:pr.hs.dorazka,chyby:pr.hs.chyby,sb:pr.hs.sb,misto:"doma",kuzelna:kuz});
+            patch.opp.push({rocnik:"2026/2027",kolo:row.kolo,id_zapasu:mid,datum:row.datum,tym:row.away,souper:row.home,hrac:pr.away,soucet:pr.as.soucet,plne:pr.as.plne,dorazka:pr.as.dorazka,chyby:pr.as.chyby,sb:pr.as.sb,misto:"venku",kuzelna:kuz});
+          });
+        }
+        patch.matches.forEach(p => {
+          const m = DATA.matches.find(x => x.rocnik==="2026/2027" && Number(x.kolo)===Number(p.kolo));
+          if (m) Object.assign(m, p);
+        });
+        const pkey = r => r.hrac+"|"+r.datum+"|"+r.soucet;
+        const haveP = new Set(DATA.players.map(pkey));
+        patch.players.forEach(r => { if (!haveP.has(pkey(r))) { DATA.players.push(r); haveP.add(pkey(r)); } });
+        const okey = r => [r.rocnik,r.hrac,r.datum,r.soucet,r.tym].join("|");
+        const haveO = new Set((DATA.opp||[]).map(okey));
+        DATA.opp = DATA.opp || [];
+        patch.opp.forEach(r => { if (!haveO.has(okey(r))) { DATA.opp.push(r); haveO.add(okey(r)); } });
+        rebuildStats();
+        if (patch.place) {
+          DATA.meta = DATA.meta || {};
+          DATA.meta.umisteni = Object.assign({}, DATA.meta.umisteni, {"2026/2027": patch.place});
+          Object.assign(PLACEMENT, DATA.meta.umisteni);
+        }
+        const now = new Date();
+        const ts = now.toLocaleString("cs-CZ", {day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
+        localStorage.setItem("tepliceD_lastUpdate", ts);
+        localStorage.setItem("tepliceD_resultPatch", JSON.stringify(patch));
+        showLastUpdate();
+        msg.textContent = "Od "+(last?last.datum:"začátku")+" do dnes: zápasů D "+patch.matches.length+", výkonů D "+patch.players.length+", protihráčů "+patch.opp.length+(patch.place?(" · "+patch.place):"");
+      } catch (e) {
+        msg.textContent = "Aktualizace selhala ("+(e && e.message ? e.message : "síť")+"). Potřeba https stránka.";
+      }
+      render();
+      showLastUpdate();
+      btn.disabled = false;
+    }
+    applySavedResults();
+    showLastUpdate();
+    $("#btnUpdate").onclick = aktualizovat;
+  </script>
+</body>
+</html>
