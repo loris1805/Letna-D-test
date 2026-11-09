@@ -1,0 +1,10 @@
+{
+  "name": "TJ Teplice Letná D",
+  "short_name": "Teplice D",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#10263d",
+  "theme_color": "#10263d",
+  "lang": "cs",
+  "icons": []
+}
